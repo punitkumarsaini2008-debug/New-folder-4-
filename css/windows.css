@@ -1,0 +1,179 @@
+/* ==============================================================================
+   ParrotCloud OS - Window Manager & Desktop Frames (MATE / XFCE Inspired)
+   ============================================================================== */
+
+.os-window {
+  position: absolute;
+  background: var(--bg-window);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-window);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, opacity 0.15s ease;
+  min-width: 320px;
+  min-height: 200px;
+  backdrop-filter: blur(20px);
+}
+
+.os-window.active {
+  border-color: var(--parrot-cyan);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 16px var(--parrot-cyan-glow);
+}
+
+.os-window.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.os-window.minimized {
+  display: none !important;
+}
+
+/* Window Titlebar */
+.window-titlebar {
+  height: 32px;
+  background: var(--bg-window-header);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  cursor: grab;
+  position: relative;
+}
+
+.os-window.active .window-titlebar {
+  background: var(--bg-window-active);
+}
+
+/* Top accent line on titlebar */
+.window-titlebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+}
+
+.os-window.active .window-titlebar::before {
+  background: linear-gradient(90deg, transparent, var(--parrot-cyan), transparent);
+}
+
+.window-titlebar:active {
+  cursor: grabbing;
+}
+
+.window-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.window-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--parrot-cyan);
+}
+
+.window-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #c9d1d9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.os-window.active .window-title {
+  color: #ffffff;
+}
+
+/* Window Control Buttons */
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.win-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: #8b949e;
+  font-size: 10px;
+  transition: all 0.15s ease;
+}
+
+.win-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.win-btn.close:hover {
+  background: var(--parrot-red);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 51, 102, 0.5);
+}
+
+.win-btn.maximize:hover {
+  background: var(--parrot-cyan);
+  color: #000000;
+}
+
+.win-btn.minimize:hover {
+  background: var(--parrot-yellow);
+  color: #000000;
+}
+
+/* Window Body Content */
+.window-content {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background: var(--bg-window);
+}
+
+/* Resize Handles (8 directions) */
+.win-resize-handle {
+  position: absolute;
+  z-index: 50;
+}
+
+.win-resize-n { top: 0; left: 6px; right: 6px; height: 5px; cursor: n-resize; }
+.win-resize-s { bottom: 0; left: 6px; right: 6px; height: 5px; cursor: s-resize; }
+.win-resize-e { top: 6px; bottom: 6px; right: 0; width: 5px; cursor: e-resize; }
+.win-resize-w { top: 6px; bottom: 6px; left: 0; width: 5px; cursor: w-resize; }
+.win-resize-ne { top: 0; right: 0; width: 10px; height: 10px; cursor: ne-resize; }
+.win-resize-nw { top: 0; left: 0; width: 10px; height: 10px; cursor: nw-resize; }
+.win-resize-se { bottom: 0; right: 0; width: 10px; height: 10px; cursor: se-resize; }
+.win-resize-sw { bottom: 0; left: 0; width: 10px; height: 10px; cursor: sw-resize; }
+
+/* Snapping Preview Ghost Overlay */
+#snap-preview {
+  position: absolute;
+  display: none;
+  background: rgba(0, 229, 255, 0.12);
+  border: 2px dashed var(--parrot-cyan);
+  box-shadow: 0 0 20px var(--parrot-cyan-glow);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 8999;
+  transition: all 0.12s ease-out;
+}

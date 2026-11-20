@@ -1,0 +1,25 @@
+{
+  "name": "parrotcloud-os",
+  "version": "1.0.0",
+  "description": "ParrotCloud OS - Online Linux Cybersecurity Operating System & Cloud Workspace",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "keywords": [
+    "parrot-os",
+    "cybersecurity",
+    "linux",
+    "web-terminal",
+    "docker",
+    "novnc",
+    "pentesting",
+    "cloud-os"
+  ],
+  "author": "ParrotCloud OS Team",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
