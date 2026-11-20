@@ -1,38 +1,100 @@
 version: '3.8'
 
+# ==============================================================================
+# Multi-User Real Linux Cloud Desktop Platform - Production Orchestration
+# ==============================================================================
+
 services:
-  parrotcloud-os:
+  # 1. Automated HTTPS Reverse Proxy (Caddy)
+  caddy:
+    image: caddy:2-alpine
+    container_name: cloudos_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - cloudos_core_net
+    depends_on:
+      - backend
+
+  # 2. Node.js Express REST API & Container Orchestrator
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: parrotcloud-workspace
-    hostname: parrotcloud
-    ports:
-      - "3000:3000"   # Web UI and HTTP Gateway
-      - "4000:4000"   # Web Terminal / WebSocket Server
-      - "6080:6080"   # noVNC Graphical Desktop Display
-    environment:
-      - PORT=3000
-      - WS_PORT=4000
-      - VNC_PORT=6080
-      - NODE_ENV=production
+      dockerfile: Dockerfile.backend
+    container_name: cloudos_backend
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2048M
-        reservations:
-          cpus: '0.5'
-          memory: 512M
-    security_opt:
-      - no-new-privileges:false
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=cloudos_db
+      - DB_USER=cloudos_admin
+      - DB_PASSWORD=${DB_PASSWORD:-cloudos_secure_password_2026!}
+      - JWT_SECRET=${JWT_SECRET:-super_secret_production_jwt_key_64_characters_minimum}
+      - GUACD_HOST=guacd
+      - GUACD_PORT=4822
+      - MAX_CONCURRENT_SESSIONS=8
+      - CONTAINER_RAM_LIMIT_MB=2048
+      - CONTAINER_CPU_QUOTA=1.5
+      - IDLE_TIMEOUT_MINUTES=15
+      - USER_DATA_PATH=/data/users
+      - DOCKER_USER_NETWORK=cloudos_user_net
+    volumes:
+      # Host Docker socket exclusively for the orchestrator (never exposed to users)
+      - /var/run/docker.sock:/var/run/docker.sock
+      - user_data:/data/users
     networks:
-      - parrot-net
+      - cloudos_core_net
+      - cloudos_user_net
+    depends_on:
+      - postgres
+      - guacd
+
+  # 3. Apache Guacamole Native Daemon (guacd)
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: cloudos_guacd
+    restart: unless-stopped
+    networks:
+      - cloudos_core_net
+      - cloudos_user_net
+
+  # 4. PostgreSQL 16 Relational Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudos_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=cloudos_db
+      - POSTGRES_USER=cloudos_admin
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-cloudos_secure_password_2026!}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./server/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - cloudos_core_net
 
 networks:
-  parrot-net:
+  # Internal management network (strictly private, zero external port forwarding)
+  cloudos_core_net:
     driver: bridge
+  # Isolated user container bridge
+  cloudos_user_net:
+    driver: bridge
+    name: cloudos_user_net
+
+volumes:
+  pg_data:
+  user_data:
+  caddy_data:
+  caddy_config:

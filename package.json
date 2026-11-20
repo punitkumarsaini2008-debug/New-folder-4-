@@ -2,10 +2,10 @@
   "name": "parrotcloud-os",
   "version": "1.0.0",
   "description": "ParrotCloud OS - Online Linux Cybersecurity Operating System & Cloud Workspace",
-  "main": "server/index.js",
+  "main": "server/server.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
   },
   "keywords": [
     "parrot-os",

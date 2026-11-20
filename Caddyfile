@@ -1,0 +1,34 @@
+{
+    admin off
+}
+
+{$DOMAIN:localhost} {
+    encode zstd gzip
+
+    # Guacamole WebSocket Tunnel
+    @guacWS {
+        header Connection *Upgrade*
+        header Upgrade websocket
+        path /guacamole*
+    }
+    reverse_proxy @guacWS backend:3000
+
+    # Real Terminal WebSocket Stream
+    @termWS {
+        header Connection *Upgrade*
+        header Upgrade websocket
+        path /terminal*
+    }
+    reverse_proxy @termWS backend:3000
+
+    # REST API & Static Desktop SPA
+    reverse_proxy backend:3000
+
+    # Hardened Security Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+}
