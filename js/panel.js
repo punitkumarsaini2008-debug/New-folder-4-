@@ -110,11 +110,9 @@ class TopPanel {
     const qBurp = document.getElementById('ql-burp');
     const qNmap = document.getElementById('ql-nmap');
     const qTools = document.getElementById('ql-tools');
-    const qBrowser = document.getElementById('ql-browser');
 
     if (qTerminal) qTerminal.onclick = () => window.openTerminalApp();
     if (qFiles) qFiles.onclick = () => window.openFileManagerApp();
-    if (qBrowser) qBrowser.onclick = () => window.openBrowserApp();
     if (qWireshark) qWireshark.onclick = () => window.openWiresharkApp();
     if (qBurp) qBurp.onclick = () => window.openBurpSuiteApp();
     if (qNmap) qNmap.onclick = () => window.openNmapApp();

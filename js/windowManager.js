@@ -364,8 +364,6 @@ class WindowManager {
     // Remove taskbar button
     const taskBtn = document.getElementById(`task-btn-${id}`);
     if (taskBtn) taskBtn.remove();
-    const mintTaskBtn = document.getElementById(`mint-task-btn-${id}`);
-    if (mintTaskBtn) mintTaskBtn.remove();
 
     // Focus previous window if available
     const openWins = Array.from(this.windows.values()).filter(w => !w.isMinimized);
@@ -377,50 +375,42 @@ class WindowManager {
   }
 
   createTaskbarButton(winData) {
-    const containers = [
-      document.getElementById('panel-tasks'),
-      document.getElementById('mint-tasks')
-    ].filter(Boolean);
+    if (!this.panelTasks) {
+      this.panelTasks = document.getElementById('panel-tasks');
+      if (!this.panelTasks) return;
+    }
 
-    containers.forEach(container => {
-      const isMint = container.id === 'mint-tasks';
-      const btnId = isMint ? `mint-task-btn-${winData.id}` : `task-btn-${winData.id}`;
-      if (document.getElementById(btnId)) return;
+    const btn = document.createElement('div');
+    btn.className = 'panel-task-item active';
+    btn.id = `task-btn-${winData.id}`;
+    btn.innerHTML = `
+      <span style="display:flex;align-items:center;width:14px;height:14px;">${winData.icon || ''}</span>
+      <span>${winData.title}</span>
+    `;
 
-      const btn = document.createElement('div');
-      btn.className = 'panel-task-item active';
-      btn.id = btnId;
-      btn.innerHTML = `
-        <span style="display:flex;align-items:center;width:14px;height:14px;">${winData.icon || ''}</span>
-        <span>${winData.title}</span>
-      `;
-
-      btn.addEventListener('click', () => {
-        if (winData.isMinimized) {
-          this.restoreWindow(winData.id);
-        } else if (this.activeWindow === winData.id) {
-          this.minimizeWindow(winData.id);
-        } else {
-          this.focusWindow(winData.id);
-        }
-      });
-
-      container.appendChild(btn);
+    btn.addEventListener('click', () => {
+      if (winData.isMinimized) {
+        this.restoreWindow(winData.id);
+      } else if (this.activeWindow === winData.id) {
+        this.minimizeWindow(winData.id);
+      } else {
+        this.focusWindow(winData.id);
+      }
     });
+
+    this.panelTasks.appendChild(btn);
   }
 
   updateTaskbarState() {
     this.windows.forEach(w => {
-      ['task-btn-', 'mint-task-btn-'].forEach(prefix => {
-        const btn = document.getElementById(`${prefix}${w.id}`);
-        if (btn) {
-          if (this.activeWindow === w.id && !w.isMinimized) {
-            btn.className = 'panel-task-item active';
-          } else {
-            btn.className = 'panel-task-item';
-          }
+      const btn = document.getElementById(`task-btn-${w.id}`);
+      if (btn) {
+        if (this.activeWindow === w.id && !w.isMinimized) {
+          btn.className = 'panel-task-item active';
+        } else {
+          btn.className = 'panel-task-item';
         }
-      });
+      }
     });
   }
 }
