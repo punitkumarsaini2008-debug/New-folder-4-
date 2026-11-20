@@ -1,21 +1,23 @@
 // ==============================================================================
-// ParrotCloud OS - Top Panel Bar (MATE Desktop Architecture)
-// Applications Menu, Quick Launch, System Telemetry, Clock & Notifications
+// Multi-OS Cybersecurity Platform - Top Panel, Left Dock & Bottom Bar
+// Supports Parrot MATE, Ubuntu Dash, Kali XFCE, Mint Cinnamon, & Fedora
 // ==============================================================================
 
 class TopPanel {
   constructor() {
     this.menuOpen = false;
     this.menuBtn = document.getElementById('app-menu-btn');
+    this.mintMenuBtn = document.getElementById('mint-menu-btn');
     this.menuDropdown = document.getElementById('app-menu-dropdown');
     this.searchInput = document.getElementById('menu-search-input');
     this.clockEl = document.getElementById('panel-clock');
+    this.mintClockEl = document.getElementById('mint-clock');
 
     this.init();
   }
 
   init() {
-    // Toggle Applications menu
+    // Toggle Applications menu (Top Panel)
     if (this.menuBtn) {
       this.menuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -23,9 +25,17 @@ class TopPanel {
       });
     }
 
+    // Toggle Menu from Linux Mint bottom bar
+    if (this.mintMenuBtn) {
+      this.mintMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleMenu();
+      });
+    }
+
     // Close menu on click outside
     document.addEventListener('click', (e) => {
-      if (this.menuOpen && !e.target.closest('#app-menu-dropdown') && !e.target.closest('#app-menu-btn')) {
+      if (this.menuOpen && !e.target.closest('#app-menu-dropdown') && !e.target.closest('#app-menu-btn') && !e.target.closest('#mint-menu-btn')) {
         this.closeMenu();
       }
     });
@@ -42,8 +52,9 @@ class TopPanel {
       });
     }
 
-    // Quick launch shortcuts
+    // Quick launch shortcuts & dock items
     this.bindQuickLaunch();
+    this.bindWorkspaces();
 
     // Clock updater
     this.updateClock();
@@ -55,6 +66,18 @@ class TopPanel {
       cloudStatusBadge.addEventListener('click', () => {
         window.openSettingsApp('cloud');
       });
+    }
+
+    // Lock button
+    const lockBtn = document.getElementById('panel-lock-btn');
+    if (lockBtn) {
+      lockBtn.addEventListener('click', () => window.osManager?.lock());
+    }
+
+    // OS Switcher button
+    const osSwitcherBtn = document.getElementById('panel-os-btn');
+    if (osSwitcherBtn) {
+      osSwitcherBtn.addEventListener('click', () => window.showOsBootloader());
     }
   }
 
@@ -80,21 +103,53 @@ class TopPanel {
   }
 
   bindQuickLaunch() {
+    // Top Panel quick launch
     const qTerminal = document.getElementById('ql-terminal');
     const qFiles = document.getElementById('ql-files');
     const qWireshark = document.getElementById('ql-wireshark');
     const qBurp = document.getElementById('ql-burp');
     const qNmap = document.getElementById('ql-nmap');
+    const qTools = document.getElementById('ql-tools');
+    const qBrowser = document.getElementById('ql-browser');
 
-    if (qTerminal) qTerminal.addEventListener('click', () => window.openTerminalApp());
-    if (qFiles) qFiles.addEventListener('click', () => window.openFileManagerApp());
-    if (qWireshark) qWireshark.addEventListener('click', () => window.openWiresharkApp());
-    if (qBurp) qBurp.addEventListener('click', () => window.openBurpSuiteApp());
-    if (qNmap) qNmap.addEventListener('click', () => window.openNmapApp());
+    if (qTerminal) qTerminal.onclick = () => window.openTerminalApp();
+    if (qFiles) qFiles.onclick = () => window.openFileManagerApp();
+    if (qBrowser) qBrowser.onclick = () => window.openBrowserApp();
+    if (qWireshark) qWireshark.onclick = () => window.openWiresharkApp();
+    if (qBurp) qBurp.onclick = () => window.openBurpSuiteApp();
+    if (qNmap) qNmap.onclick = () => window.openNmapApp();
+    if (qTools) qTools.onclick = () => window.openToolCenterApp();
+
+    // Ubuntu Left Dock shortcuts
+    const dockTerminal = document.getElementById('dock-terminal');
+    const dockFiles = document.getElementById('dock-files');
+    const dockBrowser = document.getElementById('dock-browser');
+    const dockSoftware = document.getElementById('dock-software');
+    const dockPython = document.getElementById('dock-python');
+    const dockTools = document.getElementById('dock-tools');
+    const dockSettings = document.getElementById('dock-settings');
+    const dockSwitcher = document.getElementById('dock-switcher');
+
+    if (dockTerminal) dockTerminal.onclick = () => window.openTerminalApp();
+    if (dockFiles) dockFiles.onclick = () => window.openFileManagerApp();
+    if (dockBrowser) dockBrowser.onclick = () => window.openBrowserApp();
+    if (dockSoftware) dockSoftware.onclick = () => window.openSoftwareCenterApp();
+    if (dockPython) dockPython.onclick = () => window.openPythonIdeApp();
+    if (dockTools) dockTools.onclick = () => window.openToolCenterApp();
+    if (dockSettings) dockSettings.onclick = () => window.openSettingsApp();
+    if (dockSwitcher) dockSwitcher.onclick = () => window.showOsBootloader();
+  }
+
+  bindWorkspaces() {
+    document.querySelectorAll('.workspace-btn').forEach(btn => {
+      btn.onclick = () => {
+        const wsNum = parseInt(btn.dataset.ws);
+        window.osManager?.switchWorkspace(wsNum);
+      };
+    });
   }
 
   updateClock() {
-    if (!this.clockEl) return;
     const now = new Date();
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -106,7 +161,9 @@ class TopPanel {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    this.clockEl.textContent = `${day} ${date} ${month}  ${hours}:${minutes}:${seconds}`;
+    const formatted = `${day} ${date} ${month}  ${hours}:${minutes}:${seconds}`;
+    if (this.clockEl) this.clockEl.textContent = formatted;
+    if (this.mintClockEl) this.mintClockEl.textContent = `${hours}:${minutes}:${seconds}`;
   }
 }
 

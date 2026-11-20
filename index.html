@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ParrotCloud OS – Online Linux Cybersecurity Operating System</title>
+  <title>Multi-OS Cybersecurity Platform – Parrot, Ubuntu, Kali, Mint, Fedora</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300e5ff'><circle cx='12' cy='12' r='10'/></svg>">
   <link rel="stylesheet" href="css/parrot.css">
   <link rel="stylesheet" href="css/terminal.css">
   <link rel="stylesheet" href="css/windows.css">
   <link rel="stylesheet" href="css/tools.css">
+  <link rel="stylesheet" href="css/multios.css">
 </head>
-<body>
+<body class="os-theme-parrot">
 
   <!-- ==============================================================================
-       1. PARROT OS TOP PANEL (MATE Desktop Architecture)
+       1. TOP PANEL (MATE Desktop Architecture for Parrot, Kali, Fedora & Ubuntu)
        ============================================================================== -->
   <header id="top-panel">
     <!-- Left Section: Applications Menu & Quick Launch -->
     <div class="panel-section">
-      <button class="app-menu-btn" id="app-menu-btn">
-        <!-- Parrot Security OS Logo (Stylized Cyber Bird) -->
+      <button class="app-menu-btn" id="app-menu-btn" title="Applications Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
           <path d="M7 11l5-5 5 5"></path>
@@ -30,11 +30,17 @@
 
       <!-- Quick Launch Toolbar -->
       <div style="display:flex; align-items:center; gap:2px; margin-left:6px;">
-        <button class="quick-launch-item" id="ql-terminal" title="Bash Terminal">
+        <button class="quick-launch-item" id="ql-terminal" title="Bash Terminal (Ctrl+Alt+T)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
         </button>
         <button class="quick-launch-item" id="ql-files" title="File Manager">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+        <button class="quick-launch-item" id="ql-browser" title="Web Browser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        </button>
+        <button class="quick-launch-item" id="ql-tools" title="Cybersecurity Tool Center (34 Tools)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
         </button>
         <button class="quick-launch-item" id="ql-wireshark" title="Wireshark">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12c4 0 6-4 10-4 5 0 8 4 10 4-2 0-5 4-10 4-4 0-6-4-10-4z"></path><circle cx="15" cy="11" r="1"></circle></svg>
@@ -51,110 +57,237 @@
       <div class="panel-tasks" id="panel-tasks"></div>
     </div>
 
-    <!-- Right Section: Live Telemetry & System Clock -->
+    <!-- Right Section: Workspaces, Telemetry, OS Switcher, Lock & System Clock -->
     <div class="panel-section">
+      <!-- Workspaces Switcher -->
+      <div class="workspace-switcher" id="workspace-switcher" title="Desktop Workspaces (Ctrl+Shift+W to cycle)">
+        <span class="workspace-btn active" data-ws="1">1</span>
+        <span class="workspace-btn" data-ws="2">2</span>
+        <span class="workspace-btn" data-ws="3">3</span>
+        <span class="workspace-btn" data-ws="4">4</span>
+      </div>
+
       <div class="panel-telemetry">
         <div class="telemetry-item highlight-cyan" id="panel-cpu-text">CPU: 18%</div>
         <div class="telemetry-item highlight-green" id="panel-mem-text">RAM: 32%</div>
-        <div class="telemetry-item" id="panel-cloud-status" style="cursor:pointer;" title="Click to configure Cloud VM Container">
+        <div class="telemetry-item" id="panel-cloud-status" style="cursor:pointer;" title="Click to view Cloud VM Container Connection">
           <span class="telemetry-badge-dot"></span>
           <span style="color:#56d364;">DEBIAN-12</span>
         </div>
       </div>
+
+      <!-- OS Switcher Quick Button -->
+      <button class="panel-icon-btn" id="panel-os-btn" title="Switch OS (Parrot, Ubuntu, Kali, Mint, Fedora)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span style="margin-left:4px;font-weight:700;">OS</span>
+      </button>
+
+      <!-- Lock Screen Button -->
+      <button class="panel-icon-btn" id="panel-lock-btn" title="Lock Desktop (Ctrl+Alt+L / Super+L)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </button>
+
       <div class="panel-clock" id="panel-clock">--:--:--</div>
     </div>
   </header>
 
   <!-- ==============================================================================
-       2. APPLICATIONS DROPDOWN MENU
+       2. UBUNTU GNOME DASH TO DOCK (Visible when Ubuntu 24.04 is active)
+       ============================================================================== -->
+  <aside id="left-dock">
+    <button class="dock-item" id="dock-terminal" title="Terminal (Ctrl+Alt+T)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+    </button>
+    <button class="dock-item" id="dock-files" title="Files (Nautilus)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+    <button class="dock-item" id="dock-browser" title="Firefox Web Browser">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    </button>
+    <button class="dock-item" id="dock-software" title="Ubuntu Software Center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    </button>
+    <button class="dock-item" id="dock-python" title="Python 3.12 IDE">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+    </button>
+    <button class="dock-item" id="dock-tools" title="Cybersecurity Tool Center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+    </button>
+    <button class="dock-item" id="dock-settings" title="System Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+    <div style="flex:1;"></div>
+    <button class="dock-item" id="dock-switcher" title="Switch OS Bootloader">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8m-4-4v8"></path></svg>
+    </button>
+  </aside>
+
+  <!-- ==============================================================================
+       3. LINUX MINT CINNAMON BOTTOM PANEL (Visible when Linux Mint is active)
+       ============================================================================== -->
+  <footer id="bottom-panel">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="mint-menu-btn" id="mint-menu-btn" title="Mint Application Menu">
+        <span>Menu</span>
+      </button>
+      <div class="panel-tasks" id="mint-tasks"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="workspace-switcher">
+        <span class="workspace-btn active" data-ws="1">1</span>
+        <span class="workspace-btn" data-ws="2">2</span>
+        <span class="workspace-btn" data-ws="3">3</span>
+        <span class="workspace-btn" data-ws="4">4</span>
+      </div>
+      <div class="panel-clock" id="mint-clock">--:--:--</div>
+    </div>
+  </footer>
+
+  <!-- ==============================================================================
+       4. APPLICATIONS DROPDOWN MENU
        ============================================================================== -->
   <div id="app-menu-dropdown">
     <div class="menu-search-bar">
       <input type="text" class="menu-search-input" id="menu-search-input" placeholder="Search cybersecurity tools & apps..." />
     </div>
     <div class="menu-categories-list">
+      <!-- 00 Cybersecurity Core Centers -->
+      <div class="menu-category-header">00 - Cybersecurity Hubs</div>
+      <div class="menu-item" onclick="window.openToolCenterApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+        <span>Cybersecurity Tool Center (34 Tools)</span>
+        <span class="menu-item-desc">Arsenal</span>
+      </div>
+      <div class="menu-item" onclick="window.openLearningLabApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+        <span>Cybersecurity Learning Labs (8 Labs)</span>
+        <span class="menu-item-desc">Interactive CTF</span>
+      </div>
+      <div class="menu-item" onclick="window.openReportCenterApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#e6edf3" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></span>
+        <span>Security Assessment Report Center</span>
+        <span class="menu-item-desc">PDF / CSV</span>
+      </div>
+
       <!-- 01 Information Gathering -->
-      <div class="menu-category-header">01 - Information Gathering</div>
+      <div class="menu-category-header">01 - Information Gathering & Network</div>
       <div class="menu-item" onclick="window.openNmapApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
-        <span>Nmap Network Scanner (Zenmap)</span>
+        <span>Nmap Network Scanner (Zenmap GUI)</span>
         <span class="menu-item-desc">Port Scan</span>
       </div>
-      <div class="menu-item" onclick="window.openTerminalApp(); window.topPanel.closeMenu();">
-        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline></svg></span>
-        <span>Nikto Web Scanner</span>
-        <span class="menu-item-desc">Web Recon</span>
-      </div>
-
-      <!-- 02 Vulnerability Analysis -->
-      <div class="menu-category-header">02 - Vulnerability Analysis</div>
-      <div class="menu-item" onclick="window.openOwaspZapApp(); window.topPanel.closeMenu();">
-        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
-        <span>OWASP ZAP 2.14.0</span>
-        <span class="menu-item-desc">App Scanner</span>
-      </div>
-
-      <!-- 03 Web Application Analysis -->
-      <div class="menu-category-header">03 - Web Application Analysis</div>
-      <div class="menu-item" onclick="window.openBurpSuiteApp(); window.topPanel.closeMenu();">
-        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
-        <span>Burp Suite Community Edition</span>
-        <span class="menu-item-desc">Web Proxy</span>
-      </div>
-
-      <!-- 04 Sniffing & Spoofing -->
-      <div class="menu-category-header">04 - Sniffing & Spoofing</div>
       <div class="menu-item" onclick="window.openWiresharkApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12c4 0 6-4 10-4 5 0 8 4 10 4-2 0-5 4-10 4-4 0-6-4-10-4z"></path></svg></span>
         <span>Wireshark Network Analyzer</span>
         <span class="menu-item-desc">PCAP Sniffing</span>
       </div>
+      <div class="menu-item" onclick="window.openNetworkMonitorApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8m-4-4v8"></path></svg></span>
+        <span>Network Activity Monitor</span>
+        <span class="menu-item-desc">Bandwidth & Sockets</span>
+      </div>
 
-      <!-- 05 Reverse Engineering -->
-      <div class="menu-category-header">05 - Reverse Engineering</div>
+      <!-- 02 Web Application Security -->
+      <div class="menu-category-header">02 - Web Application Security</div>
+      <div class="menu-item" onclick="window.openBurpSuiteApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
+        <span>Burp Suite Community Edition</span>
+        <span class="menu-item-desc">HTTP Proxy</span>
+      </div>
+      <div class="menu-item" onclick="window.openOwaspZapApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+        <span>OWASP ZAP 2.14.0</span>
+        <span class="menu-item-desc">App Scanner</span>
+      </div>
+      <div class="menu-item" onclick="window.openBrowserApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+        <span>Firefox-inspired Web Browser</span>
+        <span class="menu-item-desc">Web Recon</span>
+      </div>
+
+      <!-- 03 Reverse Engineering & Forensics -->
+      <div class="menu-category-header">03 - Reverse Engineering & Forensics</div>
       <div class="menu-item" onclick="window.openGhidraApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg></span>
         <span>Ghidra SRE Studio</span>
         <span class="menu-item-desc">Disassembler</span>
       </div>
 
-      <!-- 06 System & Desktop -->
-      <div class="menu-category-header">06 - System Tools</div>
+      <!-- 04 Development & Compilers -->
+      <div class="menu-category-header">04 - Development & Programming</div>
+      <div class="menu-item" onclick="window.openPythonIdeApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></span>
+        <span>Python 3.12 Security IDE</span>
+        <span class="menu-item-desc">Scripts & Sockets</span>
+      </div>
+      <div class="menu-item" onclick="window.openCIdeApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M9 9h6v6H9z"></path></svg></span>
+        <span>C / GCC 13.2 Compiler IDE</span>
+        <span class="menu-item-desc">Low-Level Exploit Dev</span>
+      </div>
+
+      <!-- 05 System & Desktop Utilities -->
+      <div class="menu-category-header">05 - System Utilities</div>
       <div class="menu-item" onclick="window.openTerminalApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></span>
-        <span>Bash Terminal (xterm)</span>
-        <span class="menu-item-desc">Shell</span>
+        <span>Bash Terminal (xterm-256color)</span>
+        <span class="menu-item-desc">POSIX Shell</span>
       </div>
       <div class="menu-item" onclick="window.openFileManagerApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span>
-        <span>Caja File Manager</span>
+        <span>File Manager (Virtual FS)</span>
         <span class="menu-item-desc">Explorer</span>
+      </div>
+      <div class="menu-item" onclick="window.openTextEditorApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path></svg></span>
+        <span>Text & Code Editor</span>
+        <span class="menu-item-desc">Pluma / Gedit</span>
+      </div>
+      <div class="menu-item" onclick="window.openCalculatorApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line></svg></span>
+        <span>Scientific & Hex Calculator</span>
+        <span class="menu-item-desc">Hex/Bin/Dec</span>
       </div>
       <div class="menu-item" onclick="window.openSystemMonitorApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
         <span>System Resource Monitor</span>
-        <span class="menu-item-desc">Htop</span>
+        <span class="menu-item-desc">Htop / Telemetry</span>
+      </div>
+      <div class="menu-item" onclick="window.openSoftwareCenterApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path></svg></span>
+        <span>Software Center / Package Manager</span>
+        <span class="menu-item-desc">APT Catalog</span>
+      </div>
+      <div class="menu-item" onclick="window.openPdfReaderApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span>
+        <span>Cybersecurity SOP & Lab Manual</span>
+        <span class="menu-item-desc">PDF Reader</span>
+      </div>
+      <div class="menu-item" onclick="window.openImageViewerApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span>
+        <span>Image Viewer & Wallpaper Manager</span>
+        <span class="menu-item-desc">Eye of MATE</span>
       </div>
       <div class="menu-item" onclick="window.openNoVNCApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect></svg></span>
-        <span>noVNC Remote Desktop</span>
-        <span class="menu-item-desc">X11 GUI</span>
-      </div>
-      <div class="menu-item" onclick="window.openTextEditorApp(); window.topPanel.closeMenu();">
-        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path></svg></span>
-        <span>Pluma Code Editor</span>
-        <span class="menu-item-desc">Editor</span>
+        <span>noVNC Remote X11 Desktop</span>
+        <span class="menu-item-desc">VNC Client</span>
       </div>
       <div class="menu-item" onclick="window.openSettingsApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg></span>
-        <span>Cloud Node Settings</span>
-        <span class="menu-item-desc">Config</span>
+        <span>Cloud & System Settings</span>
+        <span class="menu-item-desc">Preferences</span>
+      </div>
+      <div class="menu-item" onclick="window.showOsBootloader(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8m-4-4v8"></path></svg></span>
+        <span>Switch Operating System...</span>
+        <span class="menu-item-desc">Bootloader</span>
       </div>
     </div>
   </div>
 
   <!-- ==============================================================================
-       3. DESKTOP WORKSPACE & ICONS
+       5. DESKTOP WORKSPACE & ICONS
        ============================================================================== -->
   <main id="desktop" style="background-image: radial-gradient(circle at 50% 50%, #00363d 0%, #070e17 100%);">
     <!-- Desktop Icons Container -->
@@ -174,7 +307,40 @@
   </main>
 
   <!-- ==============================================================================
-       4. SCRIPTS & ENGINE INITIALIZATION
+       6. OS SELECTION BOOTLOADER MODAL
+       ============================================================================== -->
+  <div id="os-bootloader" class="hidden">
+    <div class="bootloader-header">
+      <div class="bootloader-title">
+        <span>MULTI-OS CYBERSECURITY PLATFORM</span>
+      </div>
+      <div class="bootloader-subtitle">Select an operating system environment to launch: Parrot, Ubuntu, Kali, Mint, or Fedora</div>
+    </div>
+    <div class="os-cards-grid" id="os-cards-grid"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:12px;color:#8b949e;font-size:12px;">
+      <input type="checkbox" id="bootloader-set-default" style="cursor:pointer;" />
+      <label for="bootloader-set-default" style="cursor:pointer;">Remember selection as default boot OS</label>
+    </div>
+  </div>
+
+  <!-- ==============================================================================
+       7. LOCK SCREEN OVERLAY
+       ============================================================================== -->
+  <div id="lock-screen">
+    <div class="lock-clock" id="lock-clock-time">--:--</div>
+    <div class="lock-date" id="lock-clock-date">--------</div>
+    <div class="lock-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+    </div>
+    <div class="lock-username" id="lock-user-display">security@multios</div>
+    <div class="lock-input-group">
+      <input type="password" class="lock-input" id="lock-password-input" placeholder="Enter password (any key)..." />
+      <button class="os-card-btn" id="lock-unlock-btn" style="width:auto;padding:8px 16px;">Unlock</button>
+    </div>
+  </div>
+
+  <!-- ==============================================================================
+       8. SCRIPTS & ENGINE INITIALIZATION
        ============================================================================== -->
   <script src="js/config.js"></script>
   <script src="js/shellEngine.js"></script>
@@ -183,31 +349,54 @@
   <script src="js/windowManager.js"></script>
   <script src="js/desktop.js"></script>
   <script src="js/panel.js"></script>
+  <script src="js/osManager.js"></script>
   
-  <!-- Cybersecurity Applications -->
+  <!-- Cybersecurity Hubs & Tools -->
   <script src="js/apps/terminalApp.js"></script>
+  <script src="js/apps/toolCenterApp.js"></script>
+  <script src="js/apps/learningLabApp.js"></script>
+  <script src="js/apps/reportCenterApp.js"></script>
   <script src="js/apps/nmapApp.js"></script>
   <script src="js/apps/wiresharkApp.js"></script>
   <script src="js/apps/burpSuiteApp.js"></script>
   <script src="js/apps/ghidraApp.js"></script>
   <script src="js/apps/owaspZapApp.js"></script>
   <script src="js/apps/fileManagerApp.js"></script>
+  <script src="js/apps/calculatorApp.js"></script>
+  <script src="js/apps/browserApp.js"></script>
+  <script src="js/apps/pythonIdeApp.js"></script>
+  <script src="js/apps/cIdeApp.js"></script>
   <script src="js/apps/systemMonitorApp.js"></script>
+  <script src="js/apps/networkMonitorApp.js"></script>
+  <script src="js/apps/softwareCenterApp.js"></script>
+  <script src="js/apps/pdfReaderApp.js"></script>
+  <script src="js/apps/imageViewerApp.js"></script>
   <script src="js/apps/noVNCApp.js"></script>
   <script src="js/apps/textEditorApp.js"></script>
   <script src="js/apps/settingsApp.js"></script>
 
-  <!-- Startup Bootloader -->
+  <!-- Startup Bootloader & Workspace Initialization -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // Attempt connection to live cloud container WebSocket
+      // Connect to cloud container if online (graceful offline fallback)
       window.cloudClient.connect();
 
-      // Open Bash Terminal by default on workspace launch
-      setTimeout(() => {
-        window.openTerminalApp();
-        window.notifications.show('ParrotCloud OS', 'Debian 12 Bookworm workspace initialized. Real Bash terminal ready.', 'info');
-      }, 300);
+      // Check if user has chosen a default OS
+      const defaultOs = localStorage.getItem('default_boot_os');
+      if (defaultOs && window.MULTIOS_PROFILES && window.MULTIOS_PROFILES[defaultOs]) {
+        // Auto-launch terminal on workspace boot
+        setTimeout(() => {
+          window.openTerminalApp();
+          window.notifications.show(
+            window.MULTIOS_PROFILES[defaultOs].name,
+            `${window.MULTIOS_PROFILES[defaultOs].codename} workspace initialized. POSIX Bash terminal ready.`,
+            'info'
+          );
+        }, 300);
+      } else {
+        // Show Multi-OS Bootloader selection screen
+        window.showOsBootloader();
+      }
     });
   </script>
 </body>

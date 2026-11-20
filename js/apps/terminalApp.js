@@ -1,6 +1,7 @@
 // ==============================================================================
-// ParrotCloud OS - Bash Terminal Application (xterm-compatible)
-// Real Bash Execution, Interactive In-Terminal Nano Editor, Multi-Tab Support
+// Multi-OS Cybersecurity Platform - Advanced Bash Terminal
+// Multi-tab, Autocomplete, History, Themes, Linux Tutorials & Simulation Badges
+// Strictly adheres to honest simulation labeling vs real remote Linux execution
 // ==============================================================================
 
 class TerminalApp {
@@ -8,6 +9,14 @@ class TerminalApp {
     this.tabCounter = 1;
     this.activeTabId = 'tab-1';
     this.tabs = new Map();
+    this.currentTheme = 'parrot';
+    this.availableCommands = [
+      'pwd', 'ls', 'cd', 'mkdir', 'touch', 'cp', 'mv', 'rm', 'cat', 'echo', 
+      'grep', 'find', 'whoami', 'date', 'uname', 'history', 'clear', 'ping', 
+      'nmap', 'nikto', 'wireshark', 'burpsuite', 'ghidra', 'python3', 'gcc', 
+      'netcat', 'traceroute', 'whois', 'hydra', 'john', 'hashcat', 'exiftool', 
+      'binwalk', 'foremost', 'volatility', 'sqlmap', 'neofetch', 'help', 'nano', 'curl', 'wget'
+    ];
   }
 
   open() {
@@ -16,26 +25,66 @@ class TerminalApp {
     const container = document.createElement('div');
     container.className = 'terminal-wrapper';
     container.innerHTML = `
-      <div class="terminal-tabs-bar">
-        <div class="terminal-tab active" data-tab="tab-1">
-          <span>bash #1</span>
-          <span class="terminal-tab-close" data-close="tab-1">&times;</span>
+      <div class="terminal-tabs-bar" style="justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:2px;" id="term-tabs-list">
+          <div class="terminal-tab active" data-tab="tab-1">
+            <span>bash #1</span>
+            <span class="terminal-tab-close" data-close="tab-1">&times;</span>
+          </div>
+          <button class="terminal-add-tab" id="term-add-tab" title="New Terminal Tab">+</button>
         </div>
-        <button class="terminal-add-tab" id="term-add-tab" title="New Terminal Tab">+</button>
+        <div style="display:flex; align-items:center; gap:6px; padding-right:8px;">
+          <select id="term-theme-select" class="nmap-select" style="font-size:10px; padding:2px 6px; height:22px;">
+            <option value="parrot">Theme: Parrot Cyan</option>
+            <option value="ubuntu">Theme: Ubuntu Aubergine</option>
+            <option value="kali">Theme: Kali Blue</option>
+            <option value="mint">Theme: Mint Green</option>
+            <option value="matrix">Theme: Matrix Green</option>
+          </select>
+          <button class="tool-btn" id="term-tutorial-btn" style="font-size:10px; padding:2px 6px; height:22px;">Tutorials</button>
+        </div>
       </div>
       <div class="terminal-status-strip">
         <div class="status-indicator">
           <span class="status-dot"></span>
-          <span id="term-conn-status">CLUSTERING: Debian 12 (Bookworm) / Parrot Core [pts/0]</span>
+          <span id="term-conn-status">ENVIRONMENT: [SIMULATED CLIENT SANDBOX - Educational Mode]</span>
         </div>
         <div>UTF-8 | 80x24</div>
       </div>
-      <div id="term-tab-contents" style="flex:1; display:flex; flex-direction:column; overflow:hidden;"></div>
+      <div id="term-tab-contents" style="flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative;"></div>
+      <!-- Interactive Linux Command Tutorial Drawer -->
+      <div id="term-tutorial-drawer" style="display:none; position:absolute; right:0; top:54px; bottom:0; width:280px; background:#121824; border-left:1px solid rgba(0,229,255,0.2); padding:12px; overflow-y:auto; z-index:20; box-shadow:-4px 0 20px rgba(0,0,0,0.6);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #30363d; padding-bottom:6px;">
+          <strong style="color:var(--parrot-cyan); font-size:12px;">Linux Tutorial & Commands</strong>
+          <button id="close-tutorial-btn" style="color:#8b949e; cursor:pointer;">&times;</button>
+        </div>
+        <div style="font-size:11px; color:#8b949e; line-height:1.5;">
+          <div style="color:#56d364; font-weight:700; margin-top:6px;">Navigation</div>
+          <code>pwd</code> - Show current folder<br>
+          <code>ls -la</code> - List all files with permissions<br>
+          <code>cd &lt;dir&gt;</code> - Change directory<br>
+          <div style="color:#56d364; font-weight:700; margin-top:8px;">File Operations</div>
+          <code>touch file.txt</code> - Create empty file<br>
+          <code>cp src dest</code> - Copy file<br>
+          <code>mv src dest</code> - Move/rename file<br>
+          <code>rm file</code> - Delete file<br>
+          <code>cat file</code> - Display file contents<br>
+          <code>nano file</code> - Open interactive visual editor<br>
+          <div style="color:#56d364; font-weight:700; margin-top:8px;">Security & Recon</div>
+          <code>nmap 192.168.1.100</code> - Port scan<br>
+          <code>nikto http://target</code> - Web scan<br>
+          <code>whoami</code> - Current user<br>
+          <code>uname -a</code> - Kernel & OS architecture
+        </div>
+      </div>
     `;
+
+    const activeProfile = window.MULTIOS_PROFILES ? window.MULTIOS_PROFILES[window.osManager?.activeOs || 'parrot'] : null;
+    const title = activeProfile ? `${activeProfile.user}@${activeProfile.hostname}: ~ (bash)` : 'user@cyberplatform: ~ (bash)';
 
     const winData = window.windowManager.createWindow({
       id: 'terminal',
-      title: 'parrot@parrotcloud: ~ (bash)',
+      title: title,
       icon: iconSvg,
       width: 780,
       height: 480,
@@ -46,6 +95,21 @@ class TerminalApp {
       }
     });
 
+    // Theme selector
+    const themeSelect = container.querySelector('#term-theme-select');
+    themeSelect.onchange = () => {
+      this.applyTheme(themeSelect.value, container);
+    };
+
+    // Tutorial drawer toggle
+    const tutDrawer = container.querySelector('#term-tutorial-drawer');
+    container.querySelector('#term-tutorial-btn').onclick = () => {
+      tutDrawer.style.display = tutDrawer.style.display === 'none' ? 'block' : 'none';
+    };
+    container.querySelector('#close-tutorial-btn').onclick = () => {
+      tutDrawer.style.display = 'none';
+    };
+
     // Add Tab Button
     container.querySelector('#term-add-tab').addEventListener('click', () => {
       this.addNewTab(container);
@@ -55,13 +119,36 @@ class TerminalApp {
     this.initTab('tab-1', container);
   }
 
+  applyTheme(themeName, container) {
+    this.currentTheme = themeName;
+    const screens = container.querySelectorAll('.terminal-screen');
+    screens.forEach(s => {
+      if (themeName === 'ubuntu') {
+        s.style.background = '#2c001e';
+        s.style.color = '#ffffff';
+      } else if (themeName === 'kali') {
+        s.style.background = '#0a101d';
+        s.style.color = '#79c0ff';
+      } else if (themeName === 'mint') {
+        s.style.background = '#151d18';
+        s.style.color = '#c9d1d9';
+      } else if (themeName === 'matrix') {
+        s.style.background = '#050a06';
+        s.style.color = '#00ff66';
+      } else {
+        // Parrot default
+        s.style.background = '#0b0f14';
+        s.style.color = '#e6edf3';
+      }
+    });
+  }
+
   addNewTab(container) {
     this.tabCounter++;
     const tabId = `tab-${this.tabCounter}`;
-    const tabsBar = container.querySelector('.terminal-tabs-bar');
+    const tabsList = container.querySelector('#term-tabs-list');
     const addBtn = container.querySelector('#term-add-tab');
 
-    // Deactivate previous tabs
     container.querySelectorAll('.terminal-tab').forEach(t => t.classList.remove('active'));
 
     const tabEl = document.createElement('div');
@@ -72,14 +159,12 @@ class TerminalApp {
       <span class="terminal-tab-close" data-close="${tabId}">&times;</span>
     `;
 
-    tabsBar.insertBefore(tabEl, addBtn);
+    tabsList.insertBefore(tabEl, addBtn);
     this.initTab(tabId, container);
   }
 
   initTab(tabId, container) {
     const contentsArea = container.querySelector('#term-tab-contents');
-
-    // Hide other tab screens
     contentsArea.querySelectorAll('.terminal-screen-wrapper').forEach(w => w.style.display = 'none');
 
     const screenWrap = document.createElement('div');
@@ -87,11 +172,17 @@ class TerminalApp {
     screenWrap.id = `screen-${tabId}`;
     screenWrap.style.cssText = 'flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative;';
 
+    const activeProfile = window.MULTIOS_PROFILES ? window.MULTIOS_PROFILES[window.osManager?.activeOs || 'parrot'] : {
+      user: 'parrot',
+      hostname: 'parrotcloud',
+      terminalPrompt: { userColor: '#00e5ff', hostColor: '#05d550' }
+    };
+
     screenWrap.innerHTML = `
       <div class="terminal-screen" id="output-${tabId}"></div>
-      <div class="term-input-row" style="padding: 4px 14px 10px 14px;">
+      <div class="term-input-row" style="padding: 4px 14px 10px 14px; background:rgba(0,0,0,0.2);">
         <div class="term-prompt" id="prompt-${tabId}">
-          <span class="term-prompt-user">parrot</span><span class="term-prompt-at">@</span><span class="term-prompt-host">parrotcloud</span><span class="term-prompt-colon">:</span><span class="term-prompt-path">~</span><span class="term-prompt-symbol">$ </span>
+          <span style="color:${activeProfile.terminalPrompt.userColor};font-weight:700;">${activeProfile.user}</span><span class="term-prompt-at">@</span><span style="color:${activeProfile.terminalPrompt.hostColor};font-weight:700;">${activeProfile.hostname}</span><span class="term-prompt-colon">:</span><span class="term-prompt-path" style="color:#58a6ff;">~</span><span class="term-prompt-symbol">$ </span>
         </div>
         <div class="term-input-wrapper">
           <input type="text" class="term-input" id="input-${tabId}" autocomplete="off" spellcheck="false" />
@@ -134,13 +225,10 @@ class TerminalApp {
       };
     });
 
-    // Display welcome banner
-    this.printBanner(outputEl);
-
-    // Setup input events
+    this.printBanner(outputEl, activeProfile);
     this.setupInput(tabData);
+    this.applyTheme(this.currentTheme, container);
 
-    // Focus input
     setTimeout(() => inputEl.focus(), 100);
   }
 
@@ -167,7 +255,6 @@ class TerminalApp {
     if (screenEl) screenEl.remove();
     this.tabs.delete(tabId);
 
-    // Switch to first remaining tab
     const firstRemaining = this.tabs.keys().next().value;
     if (firstRemaining) {
       const remainingTabEl = container.querySelector(`.terminal-tab[data-tab="${firstRemaining}"]`);
@@ -176,17 +263,14 @@ class TerminalApp {
     }
   }
 
-  printBanner(outputEl) {
+  printBanner(outputEl, profile) {
     const banner = document.createElement('div');
     banner.className = 'term-line';
     banner.innerHTML = `
-      <span class="ansi-cyan ansi-bold"> ____                             _    ____ _                 _    ___  ____  </span><br>
-      <span class="ansi-cyan ansi-bold">|  _ \\ __ _ _ __ _ __ ___  _   _ / |  / ___| | ___  _   _  __| |  / _ \\/ ___| </span><br>
-      <span class="ansi-cyan ansi-bold">| |_) / _\` | '__| '__/ _ \\| | | || | | |   | |/ _ \\| | | |/ _\` | | | | \\___ \\ </span><br>
-      <span class="ansi-cyan ansi-bold">|  __/ (_| | |  | | | (_) | |_| || | | |___| | (_) | |_| | (_| | | |_| |___) |</span><br>
-      <span class="ansi-cyan ansi-bold">|_|   \\__,_|_|  |_|  \\___/ \\__,_||_|  \\____|_|\\___/ \\__,_|\\__,_|  \\___/|____/ </span><br>
-      <span class="ansi-green ansi-bold">[+] ParrotCloud OS 6.0 (Debian 12 Bookworm Core) - Online Cybersecurity Workspace</span><br>
-      <span class="ansi-yellow">[*] Bash 5.2.15 initialized. Type 'help' for cybersecurity tools and system commands.</span><br><br>
+      <span class="ansi-cyan ansi-bold">Multi-OS Cybersecurity Platform - [${profile.name} ${profile.version}]</span><br>
+      <span class="ansi-yellow ansi-bold">[SIMULATED ENVIRONMENT - Educational Sandbox]</span><br>
+      <span style="color:#8b949e; font-size:11px;">Notice: All commands execute inside an in-browser sandbox simulation with POSIX filesystem support.</span><br>
+      <span style="color:#8b949e; font-size:11px;">Type 'help' for available commands, or click 'Tutorials' on top right.</span><br><br>
     `;
     outputEl.appendChild(banner);
   }
@@ -195,7 +279,7 @@ class TerminalApp {
     const { inputEl, outputEl, promptEl, nanoEl } = tabData;
 
     inputEl.addEventListener('keydown', async (e) => {
-      // Command history navigation (Up / Down)
+      // Command history (Up / Down)
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (tabData.history.length > 0) {
@@ -211,10 +295,8 @@ class TerminalApp {
         }
       } else if (e.key === 'Tab') {
         e.preventDefault();
-        // Simple autocomplete for commands and filenames
-        const val = inputEl.value;
-        const available = ['nmap', 'nikto', 'wireshark', 'burpsuite', 'ghidra', 'clear', 'help', 'neofetch', 'pwd', 'whoami', 'uname', 'cat', 'nano', 'ls'];
-        const match = available.find(a => a.startsWith(val));
+        const val = inputEl.value.trim();
+        const match = this.availableCommands.find(a => a.startsWith(val));
         if (match) inputEl.value = match + ' ';
       } else if (e.key === 'Enter') {
         e.preventDefault();
@@ -226,13 +308,13 @@ class TerminalApp {
           tabData.historyIndex = -1;
         }
 
-        // Echo command line
+        // Echo prompt + command
         const echoLine = document.createElement('div');
         echoLine.className = 'term-line';
         echoLine.innerHTML = `${promptEl.innerHTML}<span style="color:#ffffff;">${this.escapeHtml(cmdLine)}</span>`;
         outputEl.appendChild(echoLine);
 
-        // Special handling for interactive nano editor
+        // In-terminal visual nano
         if (cmdLine.trim().startsWith('nano')) {
           const parts = cmdLine.trim().split(' ');
           const targetFile = parts[1] || 'untitled.txt';
@@ -240,13 +322,12 @@ class TerminalApp {
           return;
         }
 
-        // Special handling for clear
         if (cmdLine.trim() === 'clear') {
           outputEl.innerHTML = '';
           return;
         }
 
-        // Execute command via cloudClient (cloud container WebSocket or local engine)
+        // Execute command
         const output = await window.cloudClient.executeCommand(cmdLine);
         if (output) {
           const outEl = document.createElement('div');
@@ -258,7 +339,8 @@ class TerminalApp {
         // Update prompt path if cd was executed
         if (cmdLine.trim().startsWith('cd')) {
           const cwd = window.cloudClient.localEngine.cwd;
-          const displayPath = cwd.startsWith('/home/parrot') ? '~' + cwd.substring(12) : cwd;
+          const activeHome = window.cloudClient.localEngine.env.HOME;
+          const displayPath = cwd.startsWith(activeHome) ? '~' + cwd.substring(activeHome.length) : cwd;
           promptEl.querySelector('.term-prompt-path').textContent = displayPath || '/';
         }
 
@@ -266,7 +348,6 @@ class TerminalApp {
       }
     });
 
-    // Click anywhere on terminal focuses input
     outputEl.addEventListener('click', () => inputEl.focus());
   }
 
@@ -278,7 +359,7 @@ class TerminalApp {
 
     nanoEl.innerHTML = `
       <div class="nano-header">
-        <span>GNU nano 7.2</span>
+        <span>GNU nano 7.2 (Educational Simulation)</span>
         <span>File: ${filename}</span>
         <span>[Modified]</span>
       </div>
@@ -299,12 +380,11 @@ class TerminalApp {
     const textarea = nanoEl.querySelector(`#nano-text-${tabData.id}`);
     textarea.focus();
 
-    // Handle Ctrl+O (Save) and Ctrl+X (Exit)
     textarea.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key.toLowerCase() === 'o') {
         e.preventDefault();
         this.saveNano(resolvedPath, textarea.value);
-        window.notifications.show('GNU nano', `Saved ${filename} to disk`, 'info');
+        window.notifications.show('GNU nano', `Saved ${filename}`, 'info');
       } else if (e.ctrlKey && e.key.toLowerCase() === 'x') {
         e.preventDefault();
         this.saveNano(resolvedPath, textarea.value);
@@ -329,8 +409,8 @@ class TerminalApp {
     window.cloudClient.localEngine.vfs[path] = {
       type: 'file',
       perms: 'rw-r--r--',
-      owner: 'parrot',
-      group: 'parrot',
+      owner: window.cloudClient.localEngine.currentUser,
+      group: window.cloudClient.localEngine.currentUser,
       content: content
     };
     if (!window.cloudClient.localEngine.vfs[parentDir].children.includes(fileName)) {
@@ -345,7 +425,6 @@ class TerminalApp {
   ansiToHtml(str) {
     if (!str) return '';
     let html = this.escapeHtml(str);
-    // Replace ANSI color escape sequences
     html = html.replace(/\u001b\[1;36m/g, '<span class="ansi-cyan ansi-bold">')
                .replace(/\u001b\[1;32m/g, '<span class="ansi-green ansi-bold">')
                .replace(/\u001b\[1;34m/g, '<span class="ansi-blue ansi-bold">')

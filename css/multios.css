@@ -1,0 +1,666 @@
+/* ==============================================================================
+   Multi-OS Cybersecurity Platform - Multi-OS Styling & Desktop Adaptations
+   Parrot Security OS | Ubuntu 24.04 | Kali Linux | Linux Mint | Fedora 41
+   ============================================================================== */
+
+/* ==============================================================================
+   1. OS BOOTLOADER / SELECTION SCREEN
+   ============================================================================== */
+#os-bootloader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(circle at 50% 30%, #0d1624 0%, #070a0f 80%, #030508 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(24px);
+  overflow-y: auto;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#os-bootloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bootloader-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.bootloader-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.bootloader-title span {
+  background: linear-gradient(135deg, #00e5ff 0%, #05d550 50%, #2a7fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bootloader-subtitle {
+  color: #8b949e;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* 5 Operating System Selection Cards Grid */
+.os-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  max-width: 1240px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.os-card {
+  background: rgba(18, 25, 38, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.os-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, #00e5ff);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.os-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-accent, #00e5ff);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--card-glow, rgba(0, 229, 255, 0.25));
+}
+
+.os-card:hover::before {
+  opacity: 1;
+}
+
+.os-card-logo-wrap {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.os-card-logo-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+
+.os-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+}
+
+.os-card-version {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--card-accent, #00e5ff);
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.os-card-desc {
+  font-size: 11px;
+  color: #8b949e;
+  line-height: 1.45;
+  text-align: center;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.os-card-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.os-badge {
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #c9d1d9;
+}
+
+.os-card-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-accent, #00e5ff);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.os-card:hover .os-card-btn {
+  background: var(--card-accent, #00e5ff);
+  color: #000000;
+  box-shadow: 0 0 12px var(--card-glow, rgba(0, 229, 255, 0.4));
+}
+
+/* ==============================================================================
+   2. UBUNTU LEFT DASH DOCK
+   ============================================================================== */
+#left-dock {
+  position: fixed;
+  top: var(--panel-height);
+  left: 0;
+  bottom: 0;
+  width: 54px;
+  background: rgba(22, 22, 22, 0.92);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 8px;
+  z-index: 8900;
+  backdrop-filter: blur(16px);
+}
+
+.os-theme-ubuntu #left-dock {
+  display: flex;
+}
+
+.os-theme-ubuntu #desktop {
+  left: 54px;
+}
+
+.dock-item {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  background: transparent;
+}
+
+.dock-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.08);
+}
+
+.dock-item.running::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #E95420;
+}
+
+.dock-item.active::after {
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: #E95420;
+}
+
+.dock-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ==============================================================================
+   3. LINUX MINT BOTTOM TASKBAR
+   ============================================================================== */
+#bottom-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: #20242c;
+  border-top: 1px solid rgba(135, 207, 62, 0.3);
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: var(--z-panel);
+}
+
+.os-theme-mint #top-panel {
+  display: none;
+}
+
+.os-theme-mint #bottom-panel {
+  display: flex;
+}
+
+.os-theme-mint #desktop {
+  top: 0;
+  bottom: 38px;
+}
+
+.mint-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  height: 30px;
+  background: rgba(135, 207, 62, 0.15);
+  border: 1px solid rgba(135, 207, 62, 0.4);
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mint-menu-btn:hover {
+  background: #87CF3E;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(135, 207, 62, 0.4);
+}
+
+/* ==============================================================================
+   4. MULTIPLE DESKTOP WORKSPACES
+   ============================================================================== */
+.workspace-switcher {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workspace-btn {
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  color: #8b949e;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.workspace-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.workspace-btn.active {
+  background: var(--parrot-cyan);
+  color: #000000;
+  font-weight: 700;
+}
+
+/* ==============================================================================
+   5. LOCK SCREEN OVERLAY
+   ============================================================================== */
+#lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: radial-gradient(circle at 50% 50%, #111a28 0%, #060a0f 80%, #020305 100%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(28px);
+}
+
+#lock-screen.active {
+  display: flex;
+}
+
+.lock-clock {
+  font-size: 54px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.lock-date {
+  font-size: 15px;
+  color: var(--parrot-cyan);
+  margin-bottom: 36px;
+}
+
+.lock-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(0, 229, 255, 0.15);
+  border: 2px solid var(--parrot-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+}
+
+.lock-username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.lock-input-group {
+  display: flex;
+  gap: 8px;
+  width: 260px;
+}
+
+.lock-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+}
+
+.lock-input:focus {
+  border-color: var(--parrot-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+/* ==============================================================================
+   6. CENTRALIZED CYBERSECURITY TOOL CENTER
+   ============================================================================== */
+.tool-center-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #141b26;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+}
+
+.tool-center-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #090e16;
+  border: 1px solid #30363d;
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  width: 260px;
+}
+
+.tool-center-search input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 12px;
+  outline: none;
+  width: 100%;
+}
+
+.tool-cat-tabs {
+  display: flex;
+  background: #0d121a;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+  overflow-x: auto;
+}
+
+.tool-cat-tab {
+  padding: 8px 14px;
+  font-size: 11.5px;
+  color: #8b949e;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.tool-cat-tab:hover {
+  color: #ffffff;
+}
+
+.tool-cat-tab.active {
+  color: var(--parrot-cyan);
+  border-bottom-color: var(--parrot-cyan);
+  background: rgba(0, 229, 255, 0.05);
+  font-weight: 600;
+}
+
+.tools-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tool-item-card {
+  background: #141b26;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s ease;
+}
+
+.tool-item-card:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.tool-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tool-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--parrot-cyan);
+}
+
+.tool-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tool-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.tool-card-cat {
+  font-size: 10px;
+  color: #8b949e;
+  text-transform: uppercase;
+}
+
+.tool-card-desc {
+  font-size: 11px;
+  color: #8b949e;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  flex: 1;
+}
+
+.tool-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 8px;
+  font-size: 10.5px;
+}
+
+.tool-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #56d364;
+}
+
+.tool-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #56d364;
+}
+
+/* ==============================================================================
+   7. CYBERSECURITY LEARNING LAB STYLES
+   ============================================================================== */
+.lab-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: #0b0f16;
+}
+
+.lab-sidebar {
+  width: 240px;
+  background: #111722;
+  border-right: 1px solid rgba(0, 229, 255, 0.15);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.lab-main-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 18px;
+  background: #080c12;
+}
+
+.lab-step-card {
+  background: #121924;
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.lab-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--parrot-cyan);
+  margin-bottom: 6px;
+}
+
+/* ==============================================================================
+   8. REPORT CENTER & PRINTABLE STYLES
+   ============================================================================== */
+.report-paper {
+  background: #ffffff;
+  color: #1a1e27;
+  padding: 30px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+.report-badge-simulated {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.report-badge-real {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Panel Icon Button */
+.panel-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #c9d1d9;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.panel-icon-btn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--parrot-cyan);
+  color: #ffffff;
+}
