@@ -14,7 +14,7 @@ ENV LC_ALL=C.UTF-8
 ENV PORT=10000
 
 # Install verified system tools, networking, coreutils, security tools & X11 display servers
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update -o Acquire::Retries=3 && apt-get install -y --no-install-recommends \
     bash \
     coreutils \
     procps \
@@ -39,8 +39,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     file \
     tree \
     nmap \
-    nikto \
-    tshark \
     tcpdump \
     socat \
     netcat-openbsd \
@@ -49,7 +47,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openbox \
     xterm \
     novnc \
-    websockify \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -66,10 +63,11 @@ RUN echo 'export PS1="\[\e[1;36m\]parrot\[\e[0m\]@\[\e[1;32m\]parrotcloud\[\e[0m
     echo 'alias grep="grep --color=auto"' >> /home/parrot/.bashrc
 
 # Set up sample cybersecurity lab files in user's home directory
-RUN mkdir -p /home/parrot/Desktop /home/parrot/Documents /home/parrot/Tools /home/parrot/Labs && \
+RUN mkdir -p /home/parrot/Desktop /home/parrot/Documents /home/parrot/Tools /home/parrot/Labs /tmp/.X11-unix && \
+    chmod 1777 /tmp/.X11-unix && \
     echo "# Welcome to ParrotCloud OS (Debian 12 Bookworm Core)" > /home/parrot/Desktop/README.txt && \
     echo "This is an authorized, isolated Linux container environment for cybersecurity education." >> /home/parrot/Desktop/README.txt && \
-    echo "Installed tools: nmap, nikto, tshark, tcpdump, python3, bash, coreutils." >> /home/parrot/Desktop/README.txt && \
+    echo "Installed tools: nmap, tcpdump, socat, netcat, python3, bash, coreutils." >> /home/parrot/Desktop/README.txt && \
     chown -R parrot:parrot /home/parrot
 
 # Set application directory and install Node.js dependencies
@@ -80,8 +78,8 @@ RUN npm install --omit=dev
 # Copy application source code
 COPY . .
 
-# Ensure entrypoint script has executable permissions
-RUN chmod +x /app/docker/entrypoint.sh
+# Ensure line endings are Unix LF and entrypoint is executable
+RUN sed -i 's/\r$//' /app/docker/entrypoint.sh && chmod +x /app/docker/entrypoint.sh
 
 # Render injects PORT=10000 dynamically; expose 10000 and standard 3000
 EXPOSE 10000 3000
