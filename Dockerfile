@@ -50,11 +50,15 @@ RUN apt-get update -o Acquire::Retries=3 && apt-get install -y --no-install-reco
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create unprivileged 'parrot' user (uid 1000) with safe sudo privileges
-RUN useradd -m -s /bin/bash -u 1000 parrot && \
+# The official node:20 base image includes a pre-existing 'node' user (UID 1000).
+# Remove 'node' user and group first so UID/GID 1000 is cleanly assigned to 'parrot' without exit code 4:
+RUN (userdel -r node 2>/dev/null || true) && \
+    (groupdel node 2>/dev/null || true) && \
+    useradd -m -s /bin/bash -u 1000 -U parrot && \
     echo "parrot:parrot" | chpasswd && \
     usermod -aG sudo parrot && \
-    echo "parrot ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/parrot
+    echo "parrot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/parrot && \
+    chmod 0440 /etc/sudoers.d/parrot
 
 # Configure custom Parrot-styled Bash prompt and aliases
 RUN echo 'export PS1="\[\e[1;36m\]parrot\[\e[0m\]@\[\e[1;32m\]parrotcloud\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ "' >> /home/parrot/.bashrc && \
