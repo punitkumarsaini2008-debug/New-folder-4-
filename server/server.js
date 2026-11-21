@@ -20,6 +20,8 @@ const containerManager = require('./services/containerManager');
 const authRoutes = require('./routes/auth');
 const sessionRoutes = require('./routes/sessions');
 const statsRoutes = require('./routes/stats');
+const labRoutes = require('./routes/labs');
+const labManager = require('./services/labManager');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -54,6 +56,7 @@ app.use(express.static(PUBLIC_DIR, { index: 'index.html' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/labs', labRoutes);
 
 // Error handling middleware
 app.use(notFoundHandler);
@@ -92,6 +95,17 @@ wssGuac.on('connection', (clientWs, request) => {
 
 // Real Terminal WebSocket Connection Handler
 wssTerm.on('connection', (clientWs, request) => {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  const labId = url.searchParams.get('labId');
+
+  // If request is specifically for an isolated hacking lab session
+  if (labId) {
+    const rows = parseInt(url.searchParams.get('rows'), 10) || 24;
+    const cols = parseInt(url.searchParams.get('cols'), 10) || 80;
+    labManager.attachTerminal(clientWs, labId, rows, cols);
+    return;
+  }
+
   console.log('[TerminalWS] Client connected to real terminal stream.');
   
   // Interactive Shell Process allocation

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/windows.css">
   <link rel="stylesheet" href="css/tools.css">
   <link rel="stylesheet" href="css/multios.css">
+  <link rel="stylesheet" href="css/cyberlab.css">
 </head>
 <body class="os-theme-parrot">
 
@@ -28,8 +29,17 @@
         <span>Applications</span>
       </button>
 
+      <!-- New Cyber Lab Navigation Menu Item -->
+      <button class="app-menu-btn cyber-lab-nav-btn" id="nav-cyber-lab-btn" title="Open Online Linux Hacking Lab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2" style="width:16px;height:16px;"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span style="color:#05d550;font-weight:700;">Cyber Lab</span>
+      </button>
+
       <!-- Quick Launch Toolbar -->
       <div style="display:flex; align-items:center; gap:2px; margin-left:6px;">
+        <button class="quick-launch-item" id="ql-cyberlab" title="Cyber Lab - Real Linux Terminal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        </button>
         <button class="quick-launch-item" id="ql-terminal" title="Bash Terminal (Ctrl+Alt+T)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
         </button>
@@ -95,6 +105,9 @@
        2. UBUNTU GNOME DASH TO DOCK (Visible when Ubuntu 24.04 is active)
        ============================================================================== -->
   <aside id="left-dock">
+    <button class="dock-item" id="dock-cyberlab" title="Cyber Lab - Real Linux Terminal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+    </button>
     <button class="dock-item" id="dock-terminal" title="Terminal (Ctrl+Alt+T)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
     </button>
@@ -153,6 +166,11 @@
     <div class="menu-categories-list">
       <!-- 00 Cybersecurity Core Centers -->
       <div class="menu-category-header">00 - Cybersecurity Hubs</div>
+      <div class="menu-item" onclick="window.openCyberLabApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></span>
+        <span>Cyber Lab (Online Linux Hacking Lab)</span>
+        <span class="menu-item-desc">Live Docker Shell</span>
+      </div>
       <div class="menu-item" onclick="window.openToolCenterApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
         <span>Cybersecurity Tool Center (34 Tools)</span>
@@ -352,6 +370,7 @@
   <script src="js/osManager.js"></script>
   
   <!-- Cybersecurity Hubs & Tools -->
+  <script src="js/apps/cyberLabApp.js"></script>
   <script src="js/apps/terminalApp.js"></script>
   <script src="js/apps/toolCenterApp.js"></script>
   <script src="js/apps/learningLabApp.js"></script>

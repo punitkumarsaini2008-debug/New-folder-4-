@@ -1,0 +1,58 @@
+version: '3.8'
+
+# ==============================================================================
+# Online Cyber Lab - Docker Infrastructure Composition
+# Launches the isolated internal lab target and sets up the 10.99.0.0/24 bridge
+# ==============================================================================
+
+services:
+  # Designated Safe Internal Lab Target (10.99.0.20)
+  lab-target:
+    build:
+      context: ./docker/labs/target
+      dockerfile: Dockerfile
+    image: cloudos/lab-target:latest
+    container_name: cloudos_lab_target
+    hostname: lab-target
+    restart: unless-stopped
+    networks:
+      lab_internal_net:
+        ipv4_address: 10.99.0.20
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # Pre-built Lab Images (can be built via: docker compose -f docker-compose.labs.yml build)
+  lab-ubuntu:
+    build:
+      context: ./docker/labs/ubuntu
+      dockerfile: Dockerfile
+    image: cloudos/lab-ubuntu:latest
+    profiles: ["build-only"]
+
+  lab-kali:
+    build:
+      context: ./docker/labs/kali
+      dockerfile: Dockerfile
+    image: cloudos/lab-kali:latest
+    profiles: ["build-only"]
+
+  lab-parrot:
+    build:
+      context: ./docker/labs/parrot
+      dockerfile: Dockerfile
+    image: cloudos/lab-parrot:latest
+    profiles: ["build-only"]
+
+networks:
+  # Isolated Lab Network: Non-routable internal bridge
+  lab_internal_net:
+    name: lab_internal_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.99.0.0/24
+          gateway: 10.99.0.1

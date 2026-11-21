@@ -74,6 +74,12 @@ class TopPanel {
       lockBtn.addEventListener('click', () => window.osManager?.lock());
     }
 
+    // Cyber Lab Navigation Button
+    const navCyberLab = document.getElementById('nav-cyber-lab-btn');
+    if (navCyberLab) {
+      navCyberLab.addEventListener('click', () => window.openCyberLabApp());
+    }
+
     // OS Switcher button
     const osSwitcherBtn = document.getElementById('panel-os-btn');
     if (osSwitcherBtn) {
@@ -105,6 +111,7 @@ class TopPanel {
   bindQuickLaunch() {
     // Top Panel quick launch
     const qTerminal = document.getElementById('ql-terminal');
+    const qCyberLab = document.getElementById('ql-cyberlab');
     const qFiles = document.getElementById('ql-files');
     const qWireshark = document.getElementById('ql-wireshark');
     const qBurp = document.getElementById('ql-burp');
@@ -112,6 +119,7 @@ class TopPanel {
     const qTools = document.getElementById('ql-tools');
 
     if (qTerminal) qTerminal.onclick = () => window.openTerminalApp();
+    if (qCyberLab) qCyberLab.onclick = () => window.openCyberLabApp();
     if (qFiles) qFiles.onclick = () => window.openFileManagerApp();
     if (qWireshark) qWireshark.onclick = () => window.openWiresharkApp();
     if (qBurp) qBurp.onclick = () => window.openBurpSuiteApp();
@@ -120,6 +128,7 @@ class TopPanel {
 
     // Ubuntu Left Dock shortcuts
     const dockTerminal = document.getElementById('dock-terminal');
+    const dockCyberLab = document.getElementById('dock-cyberlab');
     const dockFiles = document.getElementById('dock-files');
     const dockBrowser = document.getElementById('dock-browser');
     const dockSoftware = document.getElementById('dock-software');
@@ -129,6 +138,7 @@ class TopPanel {
     const dockSwitcher = document.getElementById('dock-switcher');
 
     if (dockTerminal) dockTerminal.onclick = () => window.openTerminalApp();
+    if (dockCyberLab) dockCyberLab.onclick = () => window.openCyberLabApp();
     if (dockFiles) dockFiles.onclick = () => window.openFileManagerApp();
     if (dockBrowser) dockBrowser.onclick = () => window.openBrowserApp();
     if (dockSoftware) dockSoftware.onclick = () => window.openSoftwareCenterApp();
