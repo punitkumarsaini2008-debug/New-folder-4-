@@ -313,9 +313,8 @@ class SettingsApp {
     if (btnSaveEndpoint) {
       btnSaveEndpoint.onclick = () => {
         const ep = container.querySelector('#set-api-endpoint').value.trim();
-        localStorage.setItem('cloudos_api_base', ep);
-        window.cloudClient.apiBase = ep;
-        window.notifications.show('Endpoint Saved', `API Base set to: ${ep}`, 'info');
+        window.cloudClient.setApiBase(ep);
+        window.notifications.show('Endpoint Saved', `API Base set to: ${ep}. Polling health...`, 'info');
       };
     }
 

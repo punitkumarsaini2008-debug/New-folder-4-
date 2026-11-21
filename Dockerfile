@@ -1,17 +1,19 @@
 # ==============================================================================
-# ParrotCloud OS - Debian/Parrot-inspired Cybersecurity Docker Container
-# Provides real Bash terminal execution, isolated sessions, & security tools
+# ParrotCloud OS - Cloud Cybersecurity Desktop Platform Container
+# Provides: Real Bash PTY, TigerVNC/Xvfb Graphical Desktop, noVNC, & Cyber Tools
+# Compatible with: Render Free Tier (512MB RAM), VPS Docker, & Local Docker
 # ==============================================================================
 
-FROM debian:bookworm-slim
+FROM node:20-bookworm-slim
 
-# Prevent interactive prompts during package installation
+# Prevent interactive configuration prompts during apt installation
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=xterm-256color
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
+ENV PORT=10000
 
-# Install base system tools, networking, coreutils, and cybersecurity utilities
+# Install verified system tools, networking, coreutils, security tools & X11 display servers
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     coreutils \
@@ -42,23 +44,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tcpdump \
     socat \
     netcat-openbsd \
-    nodejs \
-    npm \
-    tigervnc-standalone-server \
-    novnc \
-    websockify \
+    xvfb \
+    x11vnc \
     openbox \
     xterm \
+    novnc \
+    websockify \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create unprivileged 'parrot' user with safe sudo privileges for lab environments
+# Create unprivileged 'parrot' user (uid 1000) with safe sudo privileges
 RUN useradd -m -s /bin/bash -u 1000 parrot && \
     echo "parrot:parrot" | chpasswd && \
     usermod -aG sudo parrot && \
     echo "parrot ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/parrot
 
-# Configure custom Parrot-styled Bash prompt for the user
+# Configure custom Parrot-styled Bash prompt and aliases
 RUN echo 'export PS1="\[\e[1;36m\]parrot\[\e[0m\]@\[\e[1;32m\]parrotcloud\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ "' >> /home/parrot/.bashrc && \
     echo 'alias ll="ls -la --color=auto"' >> /home/parrot/.bashrc && \
     echo 'alias ls="ls --color=auto"' >> /home/parrot/.bashrc && \
@@ -71,18 +72,19 @@ RUN mkdir -p /home/parrot/Desktop /home/parrot/Documents /home/parrot/Tools /hom
     echo "Installed tools: nmap, nikto, tshark, tcpdump, python3, bash, coreutils." >> /home/parrot/Desktop/README.txt && \
     chown -R parrot:parrot /home/parrot
 
-# Copy application files into container
+# Set application directory and install Node.js dependencies
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --omit=dev || true
+RUN npm install --omit=dev
+
+# Copy application source code
 COPY . .
 
-# Expose HTTP web interface, WebSocket terminal port, and noVNC display port
-EXPOSE 3000 4000 6080
+# Ensure entrypoint script has executable permissions
+RUN chmod +x /app/docker/entrypoint.sh
 
-# Switch to parrot user for runtime execution
-USER parrot
-WORKDIR /home/parrot
+# Render injects PORT=10000 dynamically; expose 10000 and standard 3000
+EXPOSE 10000 3000
 
-# Launch ParrotCloud OS Gateway and Web Terminal
-CMD ["node", "/app/server/index.js"]
+# Execute entrypoint which starts Xvfb, Openbox, x11vnc, and Node.js server
+CMD ["/bin/bash", "/app/docker/entrypoint.sh"]

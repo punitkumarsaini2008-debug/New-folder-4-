@@ -68,6 +68,13 @@ async function query(text, params = []) {
 function executeInMemoryFallback(text, params) {
   const normalized = text.trim().toLowerCase();
 
+  // User search by username OR email
+  if (normalized.startsWith('select') && normalized.includes('from users where username = $1 or email = $2')) {
+    const [username, email] = params;
+    const user = Array.from(inMemoryStore.users.values()).find(u => u.username === username || u.email === email);
+    return { rows: user ? [user] : [], rowCount: user ? 1 : 0 };
+  }
+
   if (normalized.startsWith('select') && normalized.includes('from users where username = $1')) {
     const username = params[0];
     const user = Array.from(inMemoryStore.users.values()).find(u => u.username === username);
@@ -102,6 +109,16 @@ function executeInMemoryFallback(text, params) {
     };
     inMemoryStore.users.set(id, user);
     return { rows: [user], rowCount: 1 };
+  }
+
+  // Session queue telemetry & placement
+  if (normalized.includes('session_queue')) {
+    if (normalized.includes('count(*)')) {
+      return { rows: [{ count: '0' }], rowCount: 1 };
+    }
+    if (normalized.startsWith('insert into session_queue')) {
+      return { rows: [{ id: 1, queued_at: new Date() }], rowCount: 1 };
+    }
   }
 
   if (normalized.includes('count(*)') && normalized.includes('user_sessions')) {

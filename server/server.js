@@ -1,9 +1,10 @@
 // ==============================================================================
 // Multi-User Linux Cloud Desktop - Master Application Server
-// Node.js + Express REST API + WebSocket Guacamole & Terminal Gateway
+// Node.js + Express REST API + WebSocket Guacamole, VNC & Terminal Gateway
 // ==============================================================================
 
 const http = require('http');
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
@@ -14,6 +15,7 @@ const config = require('./config');
 const db = require('./db');
 const idleReaper = require('./services/idleReaper');
 const guacamoleTunnel = require('./services/guacamoleTunnel');
+const vncTunnel = require('./services/vncTunnel');
 const containerManager = require('./services/containerManager');
 
 // Route modules
@@ -44,9 +46,28 @@ app.use(cors({
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
+// Top-level Health Checks for Cloud Monitoring (Render, Caddy, Load Balancers)
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'HEALTHY',
+    service: 'parrotcloud-backend',
+    version: '2.0.0',
+    timestamp: new Date()
+  });
+});
+
+app.get('/healthz', (req, res) => {
+  res.json({ status: 'OK' });
+});
+
 // -----------------------------------------------------------------------------
-// 2. Static Frontend Serving (Optional unified mode / local fallback)
+// 2. Static Frontend Serving & noVNC Web Interface
 // -----------------------------------------------------------------------------
+const NOVNC_SYSTEM_PATH = '/usr/share/novnc';
+if (fs.existsSync(NOVNC_SYSTEM_PATH)) {
+  app.use('/novnc', express.static(NOVNC_SYSTEM_PATH));
+}
+
 const PUBLIC_DIR = path.resolve(__dirname, '..');
 app.use(express.static(PUBLIC_DIR, { index: 'index.html' }));
 
@@ -67,9 +88,10 @@ app.use(errorHandler);
 // -----------------------------------------------------------------------------
 const server = http.createServer(app);
 
-// WebSocket Server for Guacamole Remote Desktop & Real Shell PTY
+// WebSocket Servers for Guacamole Remote Desktop, Real Terminal PTY, & noVNC
 const wssGuac = new ws.Server({ noServer: true });
 const wssTerm = new ws.Server({ noServer: true });
+const wssVnc = new ws.Server({ noServer: true });
 
 server.on('upgrade', (request, socket, head) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
@@ -83,6 +105,10 @@ server.on('upgrade', (request, socket, head) => {
     wssTerm.handleUpgrade(request, socket, head, clientWs => {
       wssTerm.emit('connection', clientWs, request);
     });
+  } else if (pathname === '/vnc' || pathname === '/websockify') {
+    wssVnc.handleUpgrade(request, socket, head, clientWs => {
+      wssVnc.emit('connection', clientWs, request);
+    });
   } else {
     socket.destroy();
   }
@@ -91,6 +117,11 @@ server.on('upgrade', (request, socket, head) => {
 // Guacamole WebSocket Connection Handler
 wssGuac.on('connection', (clientWs, request) => {
   guacamoleTunnel.handleWebSocket(clientWs, request);
+});
+
+// noVNC / RFB WebSocket Connection Handler
+wssVnc.on('connection', (clientWs, request) => {
+  vncTunnel.handleWebSocket(clientWs, request);
 });
 
 // Real Terminal WebSocket Connection Handler
@@ -112,15 +143,17 @@ wssTerm.on('connection', (clientWs, request) => {
   const isWindows = process.platform === 'win32';
   const shellBinary = isWindows ? 'powershell.exe' : '/bin/bash';
   const shellArgs = isWindows ? ['-NoLogo'] : ['-i'];
+  const userHome = process.env.HOME || (isWindows ? process.env.USERPROFILE : '/home/parrot');
 
   const { spawn } = require('child_process');
   let proc = null;
   try {
     proc = spawn(shellBinary, shellArgs, {
+      cwd: fs.existsSync(userHome) ? userHome : undefined,
       env: {
         ...process.env,
         TERM: 'xterm-256color',
-        PS1: '\u001b[1;36muser\u001b[0m@\u001b[1;32mcloudos\u001b[0m:\u001b[1;34m\\w\u001b[0m$ '
+        PS1: '\u001b[1;36mparrot\u001b[0m@\u001b[1;32mparrotcloud\u001b[0m:\u001b[1;34m\\w\u001b[0m$ '
       }
     });
 
@@ -149,10 +182,13 @@ wssTerm.on('connection', (clientWs, request) => {
 // -----------------------------------------------------------------------------
 server.listen(config.port, config.host, async () => {
   console.log(`=======================================================`);
-  console.log(`  Multi-User Real Linux Cloud Desktop Platform v2.0.0`);
+  console.log(`  ParrotCloud OS - Cloud Cybersecurity Master Server`);
+  console.log(`  Version:            2.0.0`);
   console.log(`  REST API & UI:      http://${config.host}:${config.port}`);
-  console.log(`  Guacamole Tunnel:   ws://${config.host}:${config.port}/guacamole`);
+  console.log(`  Health Check:       http://${config.host}:${config.port}/api/stats/health`);
   console.log(`  Terminal Gateway:   ws://${config.host}:${config.port}/terminal`);
+  console.log(`  noVNC Gateway:      ws://${config.host}:${config.port}/vnc`);
+  console.log(`  Guacamole Tunnel:   ws://${config.host}:${config.port}/guacamole`);
   console.log(`  Max Active Slots:   ${config.resources.maxConcurrentSessions} containers`);
   console.log(`  Idle Timeout:       ${config.resources.idleTimeoutMinutes} minutes`);
   console.log(`=======================================================`);

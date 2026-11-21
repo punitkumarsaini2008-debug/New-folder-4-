@@ -19,7 +19,7 @@ router.get('/capacity', async (req, res, next) => {
     const queueRes = await db.query(
       `SELECT count(*) FROM session_queue WHERE status = 'waiting'`
     );
-    const queueLength = parseInt(queueRes.rows[0].count, 10);
+    const queueLength = queueRes && queueRes.rows && queueRes.rows[0] ? parseInt(queueRes.rows[0].count, 10) : 0;
 
     const totalHostMemMb = Math.round(os.totalmem() / (1024 * 1024));
     const freeHostMemMb = Math.round(os.freemem() / (1024 * 1024));

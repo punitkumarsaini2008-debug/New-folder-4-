@@ -10,6 +10,7 @@ class CloudClient {
     this.user = null;
     this.activeSession = null;
     this.mode = 'SIMULATED_SANDBOX'; // 'REAL_CLOUD_CONTAINER' | 'SIMULATED_SANDBOX'
+    this.backendState = 'STANDBY'; // 'ONLINE' | 'WAKING_UP' | 'STANDBY'
 
     this.ws = null;
     this.connected = false;
@@ -132,18 +133,25 @@ class CloudClient {
     const badge = document.getElementById('panel-cloud-status');
     if (!badge) return;
 
-    if (this.user) {
-      const dot = badge.querySelector('.telemetry-badge-dot');
+    const dot = badge.querySelector('.telemetry-badge-dot');
+    const label = badge.querySelector('span:last-child');
+
+    if (this.backendState === 'WAKING_UP') {
+      if (dot) dot.style.background = '#e95420';
+      if (label) label.textContent = 'WAKING UP (~45s)';
+      badge.title = `Render free tier container waking up from idle state (~45s). Polling ${this.apiBase}...`;
+    } else if (this.user) {
       if (dot) dot.style.background = '#05d550';
-      const label = badge.querySelector('span:last-child');
       if (label) label.textContent = this.user.username.toUpperCase();
-      badge.title = `User: ${this.user.username} | Mode: ${this.mode}`;
+      badge.title = `User: ${this.user.username} | Mode: ${this.mode} | Backend: ONLINE`;
+    } else if (this.backendState === 'ONLINE') {
+      if (dot) dot.style.background = '#05d550';
+      if (label) label.textContent = 'ONLINE';
+      badge.title = `Cloud Backend Online (${this.apiBase}). Click to authenticate or manage sessions.`;
     } else {
-      const dot = badge.querySelector('.telemetry-badge-dot');
       if (dot) dot.style.background = '#8b949e';
-      const label = badge.querySelector('span:last-child');
-      if (label) label.textContent = 'GUEST (SANDBOX)';
-      badge.title = 'Click to Sign In or Launch Isolated Cloud Container';
+      if (label) label.textContent = 'STANDALONE';
+      badge.title = 'Running in Client Sandbox Mode. Click to configure Render Backend.';
     }
   }
 
@@ -240,12 +248,34 @@ class CloudClient {
     }
   }
 
+  setApiBase(newUrl) {
+    const cleanUrl = (newUrl || '').trim().replace(/\/+$/, '');
+    this.apiBase = cleanUrl;
+    localStorage.setItem('cloudos_api_base', cleanUrl);
+    this.backendState = 'WAKING_UP';
+    this.updateUserBadge();
+    this.connect();
+    this.pollTelemetry();
+  }
+
   // ---------------------------------------------------------------------------
   // 3. WebSocket Terminal Gateway
   // ---------------------------------------------------------------------------
   connect() {
-    const wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = window.location.host || 'localhost:3000';
+    if (this.ws) {
+      try { this.ws.close(); } catch (e) {}
+    }
+
+    let wsProto, wsHost;
+    try {
+      const url = new URL(this.apiBase);
+      wsProto = url.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsHost = url.host;
+    } catch (e) {
+      wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsHost = window.location.host || 'localhost:3000';
+    }
+
     const wsUrl = `${wsProto}//${wsHost}/terminal${this.token ? `?token=${this.token}` : ''}`;
 
     try {
@@ -253,6 +283,8 @@ class CloudClient {
 
       this.ws.onopen = () => {
         this.connected = true;
+        this.backendState = 'ONLINE';
+        this.updateUserBadge();
         this.notifyStatus(true);
         console.log('[CloudClient] Real Terminal WebSocket connected:', wsUrl);
       };
@@ -294,16 +326,23 @@ class CloudClient {
   }
 
   // ---------------------------------------------------------------------------
-  // 4. Live Telemetry
+  // 4. Live Telemetry & Cold-Start Health Poller
   // ---------------------------------------------------------------------------
   async pollTelemetry() {
     try {
-      const res = await fetch(`${this.apiBase}/api/stats/capacity`);
+      // 5-second timeout for telemetry to quickly detect Render spin-down
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      const res = await fetch(`${this.apiBase}/api/stats/capacity`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
       if (res.ok) {
         const data = await res.json();
         const telemetry = data.hostTelemetry;
         const cap = data.capacity;
 
+        this.backendState = 'ONLINE';
         this.metrics = {
           cpu: Math.floor((cap.activeContainers / Math.max(1, cap.maxCapacity)) * 60 + 10),
           memory: telemetry ? Math.round((telemetry.usedMemoryMb / telemetry.totalMemoryMb) * 100) : 34,
@@ -315,6 +354,14 @@ class CloudClient {
         throw new Error('API offline');
       }
     } catch (e) {
+      // If endpoint is an external Render backend and WebSocket isn't open yet, mark waking up
+      const isRemote = this.apiBase.includes('render.com') || this.apiBase.includes('http');
+      if (isRemote && !this.connected && this.backendState !== 'ONLINE') {
+        this.backendState = 'WAKING_UP';
+      } else if (!this.connected) {
+        this.backendState = 'STANDBY';
+      }
+
       this.metrics = {
         cpu: Math.floor(Math.random() * 8 + 14),
         memory: Math.floor(Math.random() * 4 + 32),
@@ -323,6 +370,8 @@ class CloudClient {
         status: 'standalone'
       };
     }
+
+    this.updateUserBadge();
 
     const cpuEl = document.getElementById('panel-cpu-text');
     const memEl = document.getElementById('panel-mem-text');

@@ -82,6 +82,28 @@ class CyberLabApp {
                   <div class="cyberlab-os-meta">Debian 12 • Privacy & Recon</div>
                 </div>
               </div>
+
+              <!-- Linux Mint Card -->
+              <div class="cyberlab-os-card ${this.selectedOs === 'mint' ? 'active' : ''}" data-os="mint">
+                <div class="cyberlab-os-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#87cf3e" stroke-width="2" style="width:18px;height:18px;"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 12h10M7 8h4M13 16h4"/></svg>
+                </div>
+                <div class="cyberlab-os-info">
+                  <div class="cyberlab-os-name">Linux Mint 22</div>
+                  <div class="cyberlab-os-meta">Cinnamon • User-Friendly Shell</div>
+                </div>
+              </div>
+
+              <!-- Fedora Security Lab Card -->
+              <div class="cyberlab-os-card ${this.selectedOs === 'fedora' ? 'active' : ''}" data-os="fedora">
+                <div class="cyberlab-os-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#51a2da" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+                </div>
+                <div class="cyberlab-os-info">
+                  <div class="cyberlab-os-name">Fedora Security Lab 40</div>
+                  <div class="cyberlab-os-meta">Red Hat / RPM • Forensics Toolkit</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -387,8 +409,17 @@ class CyberLabApp {
       this.ws.close();
     }
 
-    const wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = window.location.host || 'localhost:3000';
+    const apiBase = window.cloudClient?.apiBase || window.location.origin;
+    let wsProto, wsHost;
+    try {
+      const url = new URL(apiBase);
+      wsProto = url.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsHost = url.host;
+    } catch (e) {
+      wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsHost = window.location.host || 'localhost:3000';
+    }
+
     const wsUrl = `${wsProto}//${wsHost}/terminal?labId=${labId}&rows=26&cols=90`;
 
     const indicator = this.container.querySelector('#lab-term-indicator');

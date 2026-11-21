@@ -43,6 +43,26 @@ const LAB_OS_SPECS = {
     hostname: 'parrot-lab',
     tools: ['nmap', 'netcat', 'python3', 'gcc', 'git', 'traceroute', 'nano', 'curl'],
     accentColor: '#00e5ff'
+  },
+  mint: {
+    id: 'mint',
+    name: 'Linux Mint 22 Lab',
+    image: 'cloudos/lab-mint:latest',
+    fallbackImage: 'ubuntu:24.04',
+    defaultUser: 'hacker',
+    hostname: 'mint-lab',
+    tools: ['nmap', 'netcat', 'python3', 'gcc', 'git', 'curl', 'nano'],
+    accentColor: '#87cf3e'
+  },
+  fedora: {
+    id: 'fedora',
+    name: 'Fedora Security Lab 40',
+    image: 'cloudos/lab-fedora:latest',
+    fallbackImage: 'fedora:40',
+    defaultUser: 'hacker',
+    hostname: 'fedora-lab',
+    tools: ['nmap', 'nc', 'python3', 'gcc', 'git', 'curl', 'nano'],
+    accentColor: '#51a2da'
   }
 };
 
