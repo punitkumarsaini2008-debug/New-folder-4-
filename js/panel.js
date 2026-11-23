@@ -91,6 +91,53 @@ class TopPanel {
     if (osSwitcherBtn) {
       osSwitcherBtn.addEventListener('click', () => window.showOsBootloader());
     }
+
+    // User Profile / Auth Button
+    const panelAuthBtn = document.getElementById('panel-auth-btn');
+    if (panelAuthBtn) {
+      panelAuthBtn.addEventListener('click', () => {
+        if (window.authManager && window.authManager.isAuthenticated()) {
+          window.openUserDashboardApp();
+        } else {
+          window.openAuthApp('login');
+        }
+      });
+    }
+
+    // Sync User Badge with Auth State
+    if (window.authManager) {
+      const updatePanelUser = (user) => {
+        const nameEl = document.getElementById('panel-user-name');
+        const roleEl = document.getElementById('panel-user-role');
+        const avatarEl = document.getElementById('panel-user-avatar');
+        if (user) {
+          if (nameEl) nameEl.textContent = user.username || user.name || 'User';
+          if (roleEl) {
+            const role = (user.role || 'student').toLowerCase();
+            roleEl.textContent = role.toUpperCase();
+            roleEl.className = `user-role-pill ${role}`;
+          }
+          if (avatarEl) avatarEl.textContent = (user.username || 'U')[0].toUpperCase();
+        } else {
+          if (nameEl) nameEl.textContent = 'Sign In';
+          if (roleEl) {
+            roleEl.textContent = 'GUEST';
+            roleEl.className = 'user-role-pill student';
+          }
+          if (avatarEl) avatarEl.textContent = '👤';
+        }
+      };
+
+      window.authManager.on('auth:login', updatePanelUser);
+      window.authManager.on('auth:logout', () => updatePanelUser(null));
+      window.authManager.on('auth:profile_updated', updatePanelUser);
+
+      // Initial state sync
+      const currentUser = window.authManager.getCurrentUser();
+      if (currentUser) {
+        updatePanelUser(currentUser);
+      }
+    }
   }
 
   toggleMenu() {

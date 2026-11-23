@@ -86,52 +86,52 @@ window.PRACTICE_LABS_DATA = [
   {
     "id": "lab-001",
     "number": 1,
-    "title": "Lab 1: Filesystem Hierarchy Standard",
+    "title": "Lab 1: Find the Linux Operating System",
     "category": "Linux Fundamentals",
     "difficulty": "Beginner",
-    "time": "15 min",
-    "objective": "Master filesystem hierarchy standard through practical hands-on command execution, configuration verification, and technical troubleshooting.",
+    "time": "10 min",
+    "objective": "Learn how Linux identifies operating system distribution details, release names, and kernel configurations.",
     "tools": [
       "bash",
-      "ls"
+      "cat"
     ],
     "instructions": [
-      "Review the theoretical context and security implications of filesystem hierarchy standard.",
-      "Execute the recommended commands in the practice terminal to observe system behavior.",
-      "Analyze the command output and verify system parameters.",
-      "Answer the 3 evaluation questions to validate your technical understanding."
+      "Open the terminal in the right pane.",
+      "Explore the /etc configuration directory where distribution metadata is stored.",
+      "Execute 'cat /etc/os-release' to inspect operating system name, version, and architecture.",
+      "Submit the verified command to complete the lab and earn 10 points."
     ],
     "commands": [
-      "ls -ld / /etc /var /usr /home"
+      "cat /etc/os-release"
     ],
-    "exercise": "Execute the command 'ls -ld / /etc /var /usr /home' in the interactive terminal, observe the returned system response, and verify the resulting state.",
-    "expectedOutput": "drwxr-xr-x 2 user user 4096 Nov 23 12:00 .\ndrwxr-xr-x 4 user user 4096 Nov 23 11:30 ..\n-rw-r--r-- 1 user user  248 Nov 23 12:05 sample.txt\n-rwxr-xr-x 1 user user 1024 Nov 23 12:08 script.sh",
+    "exercise": "Execute the command 'cat /etc/os-release' in the interactive terminal, observe the returned operating system parameters, and submit your answer.",
+    "expectedOutput": "NAME=\"Parrot Security OS\"\nVERSION=\"6.0 (Lrz)\"\nID=parrot\nID_LIKE=debian\nPRETTY_NAME=\"Parrot Security 6.0\"",
     "questions": [
       {
         "id": "q-001-1",
-        "question": "What is the primary command-line tool used in this lab?",
-        "answer": "ls",
-        "hint": "Check the first command in the exercise: ls."
+        "question": "Which Linux command displays operating system information?",
+        "answer": "cat /etc/os-release",
+        "hint": "Look inside the /etc directory."
       },
       {
         "id": "q-001-2",
-        "question": "What is the primary objective of running 'ls -ld / /etc /var /usr /home...'?",
-        "answer": "Filesystem Hierarchy Standard",
-        "hint": "This directly tests: Filesystem Hierarchy Standard."
+        "question": "Which system file contains standard Linux OS release identification metadata?",
+        "answer": "/etc/os-release",
+        "hint": "Check the filename inside /etc: os-release."
       },
       {
         "id": "q-001-3",
-        "question": "Why must this security test be performed only on authorized systems or lab networks?",
-        "answer": "Legal authorization",
-        "hint": "Unauthorized security scanning or testing violates laws like CFAA."
+        "question": "Which initialization system standard adopted the /etc/os-release specification across modern distributions?",
+        "answer": "systemd",
+        "hint": "The standard Linux init system and service manager is systemd."
       }
     ],
-    "solution": "To successfully complete this exercise, execute:\n```bash\nls -ld / /etc /var /usr /home\n```\nThen verify:\n1. What is the primary command-line tool used in this lab? -> Answer: `ls`\n2. What is the primary objective of running 'ls -ld / /etc /var /usr /home...'? -> Answer: `Filesystem Hierarchy Standard`\n3. Why must this security test be performed only on authorized systems or lab networks? -> Answer: `Legal authorization`",
+    "solution": "To successfully complete this exercise, execute:\n```bash\ncat /etc/os-release\n```\nExplanation: The /etc/os-release file is the standard configuration file used by modern Linux distributions (Parrot, Kali, Ubuntu, Debian, Mint, Fedora) to declare operating system identification metadata.\nAnswers:\n1. cat /etc/os-release\n2. /etc/os-release\n3. systemd",
     "tags": [
       "linux-fundamentals",
       "beginner",
       "bash",
-      "ls"
+      "cat"
     ]
   },
   {

@@ -1111,8 +1111,8 @@ class PracticeLabsApp {
     }
   }
 
-  // Question Answer Validation
-  checkQuestionAnswer(lab, questionIndex) {
+  // Question Answer Validation (Client & Server-Side Evaluation)
+  async checkQuestionAnswer(lab, questionIndex) {
     if (!lab || !lab.questions || !lab.questions[questionIndex]) return;
     const qObj = lab.questions[questionIndex];
     const inputEl = this.container.querySelector(`#plab-qinput-${questionIndex}`);
@@ -1126,11 +1126,42 @@ class PracticeLabsApp {
       return;
     }
 
-    // Save user answer
+    // Save user answer locally
     if (!this.state.userAnswers[lab.id]) this.state.userAnswers[lab.id] = {};
     this.state.userAnswers[lab.id][questionIndex] = userAns;
     this.saveState();
 
+    // 1. Try server-side validation via POST /api/labs/submit-answer
+    let serverVerified = false;
+    let explanationText = '';
+    try {
+      const apiBase = window.authManager?.apiBase || 'http://localhost:3000';
+      const token = window.authManager?.token;
+      const res = await fetch(`${apiBase}/api/labs/submit-answer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          challengeId: lab.id,
+          questionIndex,
+          answer: userAns
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.status === 'SUCCESS') {
+          serverVerified = true;
+          explanationText = data.explanation || '';
+        }
+      }
+    } catch (e) {
+      // Offline fallback
+    }
+
+    // 2. Client-side normalization & fallback check
     const normalize = (str) => {
       return String(str || '')
         .toLowerCase()
@@ -1141,10 +1172,10 @@ class PracticeLabsApp {
         .trim();
     };
 
-    const expected = normalize(qObj.a);
+    const expected = normalize(qObj.answer || qObj.a);
     const userNorm = normalize(userAns);
 
-    const isMatch = (
+    const isMatch = serverVerified || (
       userNorm === expected ||
       (expected.length > 3 && userNorm.includes(expected)) ||
       (userNorm.length > 3 && expected.includes(userNorm))
@@ -1152,13 +1183,40 @@ class PracticeLabsApp {
 
     if (isMatch) {
       feedbackEl.className = 'plab-q-feedback correct';
-      feedbackEl.innerHTML = `<strong>✓ Correct!</strong> Great job: <code>${qObj.a}</code>`;
 
-      // Check if all 3 questions answered correctly
+      const exp = explanationText || (lab.id === 'lab-001' ? 
+        'The /etc/os-release file is the standard configuration file used by modern Linux distributions (Parrot, Kali, Ubuntu, Mint, Fedora) to declare operating system identification metadata.' : 
+        `This command correctly executes the required operation (${qObj.answer || qObj.a}) according to standard Linux system architecture.`);
+
+      feedbackEl.innerHTML = `
+        <div style="font-size:12px; font-weight:800; color:#05d550; margin-bottom:4px;">
+          ✓ SUCCESS: Answer Verified! Awarded +10 Points.
+        </div>
+        <div style="font-size:11.5px; color:#c9d1d9; line-height:1.45; margin-bottom:6px;">
+          <strong>Explanation:</strong> ${exp}
+        </div>
+        <div style="font-size:11px; color:#56d364; font-family:var(--font-mono);">
+          Answer: <code>${qObj.answer || qObj.a}</code>
+        </div>
+      `;
+
+      // Award 10 points to user profile
+      if (window.authManager && typeof window.authManager.addPoints === 'function') {
+        window.authManager.addPoints(10);
+      }
+
+      // Check if all questions in this lab are completed
       this.checkLabCompletionStatus(lab);
     } else {
       feedbackEl.className = 'plab-q-feedback incorrect';
-      feedbackEl.innerHTML = `<strong>✗ Not quite right.</strong> Check syntax or click "Show Hint".`;
+      feedbackEl.innerHTML = `
+        <div style="font-weight:800; color:#ff3366; margin-bottom:3px;">
+          ✗ Incorrect Answer. Please review and try another attempt.
+        </div>
+        <div style="font-size:11px; color:#ffcc00;">
+          💡 <strong>Helpful Hint:</strong> ${qObj.hint || 'Review the practical commands and execution steps above.'}
+        </div>
+      `;
     }
   }
 

@@ -20,6 +20,8 @@ class DesktopManager {
     if (!this.container) return;
 
     const icons = [
+      { id: 'userdashboard', title: 'My Dashboard', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`, action: () => window.openUserDashboardApp() },
+      { id: 'admindashboard', title: 'Admin Console', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff3366" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`, action: () => window.openAdminDashboardApp() },
       { id: 'practicelabs', title: '500 Cyber Labs', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`, action: () => window.openPracticeLabsApp() },
       { id: 'cyberlab', title: 'Cyber Lab', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`, action: () => window.openCyberLabApp() },
       { id: 'toolcenter', title: 'Tool Center', icon: this.getIconSvg('grid'), action: () => window.openToolCenterApp() },

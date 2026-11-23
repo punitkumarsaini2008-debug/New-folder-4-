@@ -71,7 +71,33 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+async function optionalAuthenticate(req, res, next) {
+  try {
+    let token = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    } else if (req.query && req.query.token) {
+      token = req.query.token;
+    }
+    if (!token) return next();
+
+    const decoded = jwt.verify(token, config.jwt.secret);
+    const userRes = await db.query(
+      'SELECT id, username, email, role, points, disk_quota_mb, max_active_containers, is_active FROM users WHERE id = $1',
+      [decoded.userId]
+    );
+    if (userRes.rowCount > 0 && userRes.rows[0].is_active) {
+      req.user = userRes.rows[0];
+    }
+    next();
+  } catch (err) {
+    next();
+  }
+}
+
 module.exports = {
   authenticate,
-  requireAdmin
+  requireAdmin,
+  optionalAuthenticate
 };

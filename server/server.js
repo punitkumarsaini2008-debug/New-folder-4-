@@ -20,6 +20,7 @@ const containerManager = require('./services/containerManager');
 
 // Route modules
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
 const sessionRoutes = require('./routes/sessions');
 const statsRoutes = require('./routes/stats');
 const labRoutes = require('./routes/labs');
@@ -75,6 +76,7 @@ app.use(express.static(PUBLIC_DIR, { index: 'index.html' }));
 // 3. API Routes
 // -----------------------------------------------------------------------------
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/labs', labRoutes);

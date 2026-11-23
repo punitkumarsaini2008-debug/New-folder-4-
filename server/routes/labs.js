@@ -4,8 +4,10 @@
 // ==============================================================================
 
 const express = require('express');
+const db = require('../db');
 const labManager = require('../services/labManager');
 const { apiLimiter } = require('../middleware/rateLimiter');
+const { authenticate, optionalAuthenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -153,6 +155,136 @@ router.post('/verify-flag', apiLimiter, (req, res) => {
     res.json(result);
   } else {
     res.status(400).json(result);
+  }
+});
+
+// -----------------------------------------------------------------------------
+// POST /api/labs/submit-answer (Server-side validation for Cybersecurity Labs)
+// -----------------------------------------------------------------------------
+router.post('/submit-answer', apiLimiter, optionalAuthenticate, async (req, res, next) => {
+  try {
+    const challengeId = req.body.challengeId;
+    const answer = req.body.answer !== undefined ? req.body.answer : req.body.submittedAnswer;
+    const userId = req.user ? req.user.id : 2; // Default to student ID if guest/demo session
+
+    if (!challengeId || answer === undefined) {
+      return res.status(400).json({
+        success: false,
+        error: 'challengeId and answer are required.'
+      });
+    }
+
+    // 1. Fetch challenge from database or fallback
+    let challenge = null;
+    const chRes = await db.query('SELECT * FROM challenges WHERE id = $1', [challengeId]);
+    if (chRes.rowCount > 0) {
+      challenge = chRes.rows[0];
+    } else if (db.inMemoryStore && db.inMemoryStore.challenges.has(challengeId)) {
+      challenge = db.inMemoryStore.challenges.get(challengeId);
+    }
+
+    // Fallback dictionary for common core labs if not found in db
+    if (!challenge) {
+      const knownLabs = {
+        'lab-os-find': {
+          title: 'Find the Linux operating system',
+          expected_answer: 'cat /etc/os-release',
+          explanation: 'The /etc/os-release file is the standard configuration file used by modern Linux distributions (Parrot, Ubuntu, Debian, Kali, Mint, and Fedora) to declare operating system identification metadata.',
+          hint: 'Look inside the /etc directory for standard release files.',
+          points: 10
+        }
+      };
+      challenge = knownLabs[challengeId];
+    }
+
+    if (!challenge) {
+      return res.status(404).json({
+        success: false,
+        error: 'Challenge not found.'
+      });
+    }
+
+    // 2. Normalize and compare answers
+    const normalize = (str) => {
+      return String(str || '')
+        .toLowerCase()
+        .replace(/^[`'"]+|[`'"]+$/g, '')
+        .replace(/^\$\s*/, '')
+        .replace(/^#\s*/, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const userNorm = normalize(answer);
+    const expectedNorm = normalize(challenge.expected_answer || challenge.answer);
+
+    const isCorrect = (
+      userNorm === expectedNorm ||
+      (expectedNorm.length > 3 && userNorm.includes(expectedNorm)) ||
+      (userNorm.length > 3 && expectedNorm.includes(userNorm))
+    );
+
+    if (isCorrect) {
+      const pointsToAward = challenge.points || 10;
+
+      // Record progress in database
+      await db.query(
+        `INSERT INTO user_challenge_progress (user_id, challenge_id, user_answer, points_awarded, status) 
+         VALUES ($1, $2, $3, $4, 'completed') 
+         ON CONFLICT (user_id, challenge_id) DO UPDATE SET 
+           user_answer = EXCLUDED.user_answer, 
+           completed_at = NOW()`,
+        [userId, challengeId, answer.trim(), pointsToAward]
+      );
+
+      // Increment user points
+      await db.query('UPDATE users SET points = points + $1 WHERE id = $2', [pointsToAward, userId]);
+
+      // Audit log
+      await db.query(
+        'INSERT INTO audit_logs (user_id, action, ip_address, details) VALUES ($1, $2, $3, $4)',
+        [userId, 'LAB_COMPLETED', req.ip, JSON.stringify({ challengeId, pointsAwarded: pointsToAward })]
+      );
+
+      return res.json({
+        success: true,
+        status: 'SUCCESS',
+        message: 'SUCCESS! Correct answer verified.',
+        pointsAwarded: pointsToAward,
+        totalPoints: ((req.user && req.user.points !== undefined) ? req.user.points : 100) + pointsToAward,
+        explanation: challenge.explanation || 'Command syntax and execution verified successfully.',
+        completed: true
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        status: 'INCORRECT',
+        error: 'Incorrect answer. Double-check syntax and try again.',
+        hint: challenge.hint || 'Review the practical commands and execution steps provided in the guide.'
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+// -----------------------------------------------------------------------------
+// GET /api/labs/user-progress (Fetch user completed challenge IDs)
+// -----------------------------------------------------------------------------
+router.get('/user-progress', authenticate, async (req, res, next) => {
+  try {
+    const progRes = await db.query(
+      'SELECT challenge_id, points_awarded, completed_at FROM user_challenge_progress WHERE user_id = $1 AND status = $2',
+      [req.user.id, 'completed']
+    );
+
+    res.json({
+      success: true,
+      completedChallenges: progRes.rows || [],
+      totalPoints: req.user.points || 0
+    });
+  } catch (err) {
+    next(err);
   }
 });
 
