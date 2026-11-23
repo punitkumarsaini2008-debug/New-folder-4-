@@ -1,0 +1,786 @@
+/* ==============================================================================
+   ParrotCloud OS - Cyber Security Practice Lab: 500 Hands-on Experiments
+   Style: Dark Cyber Aesthetic, High-Contrast Neon Badges, Split Workspace Layout
+   ============================================================================== */
+
+.plab-wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: #0a0e14;
+  color: #e6edf3;
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+/* 1. SIDEBAR NAVIGATION */
+.plab-sidebar {
+  width: 250px;
+  min-width: 250px;
+  background: #0e141d;
+  border-right: 1px solid rgba(0, 229, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.plab-sidebar-header {
+  padding: 14px 16px;
+  background: #121924;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plab-sidebar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid var(--parrot-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--parrot-cyan);
+  flex-shrink: 0;
+}
+
+.plab-sidebar-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.plab-sidebar-subtitle {
+  font-size: 10px;
+  color: var(--parrot-green);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.plab-sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plab-nav-group-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #8b949e;
+  padding: 10px 10px 4px;
+  letter-spacing: 0.8px;
+}
+
+.plab-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #c9d1d9;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.plab-nav-item:hover {
+  background: rgba(0, 229, 255, 0.08);
+  color: #ffffff;
+}
+
+.plab-nav-item.active {
+  background: rgba(0, 229, 255, 0.15);
+  color: var(--parrot-cyan);
+  font-weight: 600;
+  border-left: 3px solid var(--parrot-cyan);
+}
+
+.plab-nav-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plab-nav-count {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #8b949e;
+  font-family: var(--font-mono);
+}
+
+.plab-nav-item.active .plab-nav-count {
+  background: rgba(0, 229, 255, 0.25);
+  color: var(--parrot-cyan);
+}
+
+/* 2. MAIN CONTENT AREA */
+.plab-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #090d13;
+}
+
+/* Top Action & Search Bar */
+.plab-topbar {
+  padding: 10px 16px;
+  background: #0f151f;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.plab-search-box {
+  flex: 1;
+  min-width: 220px;
+  max-width: 440px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.plab-search-box svg {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: #8b949e;
+  pointer-events: none;
+}
+
+.plab-search-input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  background: #141c28;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.plab-search-input:focus {
+  border-color: var(--parrot-cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+}
+
+.plab-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.plab-btn.primary {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--parrot-cyan);
+  color: var(--parrot-cyan);
+}
+
+.plab-btn.primary:hover {
+  background: var(--parrot-cyan);
+  color: #0b0f14;
+  box-shadow: 0 0 10px var(--parrot-cyan-glow);
+}
+
+.plab-btn.success {
+  background: rgba(5, 213, 80, 0.15);
+  border-color: var(--parrot-green);
+  color: var(--parrot-green);
+}
+
+.plab-btn.success:hover {
+  background: var(--parrot-green);
+  color: #0b0f14;
+}
+
+.plab-btn.secondary {
+  background: #16202c;
+  border-color: #30363d;
+  color: #c9d1d9;
+}
+
+.plab-btn.secondary:hover {
+  background: #202b3b;
+  border-color: #484f58;
+  color: #ffffff;
+}
+
+.plab-btn.danger {
+  background: rgba(255, 51, 102, 0.15);
+  border-color: var(--parrot-red);
+  color: var(--parrot-red);
+}
+
+.plab-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 3. DASHBOARD OVERVIEW VIEW */
+.plab-content-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.plab-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.plab-stat-card {
+  background: #111822;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.plab-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.plab-stat-icon.cyan { background: rgba(0, 229, 255, 0.12); color: var(--parrot-cyan); border: 1px solid rgba(0, 229, 255, 0.3); }
+.plab-stat-icon.green { background: rgba(5, 213, 80, 0.12); color: var(--parrot-green); border: 1px solid rgba(5, 213, 80, 0.3); }
+.plab-stat-icon.yellow { background: rgba(255, 204, 0, 0.12); color: var(--parrot-yellow); border: 1px solid rgba(255, 204, 0, 0.3); }
+.plab-stat-icon.purple { background: rgba(187, 134, 252, 0.12); color: var(--parrot-purple); border: 1px solid rgba(187, 134, 252, 0.3); }
+
+.plab-stat-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  line-height: 1.1;
+}
+
+.plab-stat-label {
+  font-size: 11px;
+  color: #8b949e;
+  margin-top: 3px;
+}
+
+/* Category Progress Cards Grid */
+.plab-cat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.plab-cat-card {
+  background: #111822;
+  border: 1px solid #222e3e;
+  border-radius: 6px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.plab-cat-card:hover {
+  border-color: var(--parrot-cyan);
+  background: #141d2a;
+  transform: translateY(-2px);
+}
+
+.plab-cat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.plab-cat-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.plab-cat-card-count {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--parrot-cyan);
+}
+
+.plab-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #182230;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.plab-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--parrot-cyan), var(--parrot-green));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* 4. LAB CATALOG CARDS GRID */
+.plab-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.plab-card {
+  background: #111722;
+  border: 1px solid #202b3a;
+  border-radius: 7px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.plab-card:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  background: #141c2a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.plab-card.completed {
+  border-color: rgba(5, 213, 80, 0.4);
+}
+
+.plab-card.completed::after {
+  content: "COMPLETED";
+  position: absolute;
+  top: 10px;
+  right: -24px;
+  background: var(--parrot-green);
+  color: #0b0f14;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 24px;
+  transform: rotate(45deg);
+  letter-spacing: 0.5px;
+}
+
+.plab-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.plab-card-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--parrot-cyan);
+  font-weight: 700;
+}
+
+.plab-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.plab-card-desc {
+  font-size: 11.5px;
+  color: #8b949e;
+  line-height: 1.45;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.plab-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.plab-badge {
+  font-size: 9.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-family: var(--font-mono);
+}
+
+.plab-badge.beginner { background: rgba(5, 213, 80, 0.15); color: #05d550; border: 1px solid rgba(5, 213, 80, 0.3); }
+.plab-badge.intermediate { background: rgba(255, 204, 0, 0.15); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3); }
+.plab-badge.advanced { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
+.plab-badge.category { background: rgba(0, 229, 255, 0.1); color: var(--parrot-cyan); border: 1px solid rgba(0, 229, 255, 0.25); }
+.plab-badge.time { background: #1c2635; color: #8b949e; }
+
+.plab-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #1c2838;
+  padding-top: 10px;
+}
+
+/* Pagination Bar */
+.plab-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 12px;
+}
+
+/* 5. LAB WORKSPACE (SPLIT PANE VIEW) */
+.plab-workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.plab-ws-header {
+  padding: 10px 16px;
+  background: #0f151f;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plab-ws-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.plab-ws-panes {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Left Pane: Guide */
+.plab-ws-left {
+  flex: 1.1;
+  overflow-y: auto;
+  padding: 16px;
+  border-right: 1px solid rgba(0, 229, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Right Pane: Interactive Terminal */
+.plab-ws-right {
+  flex: 0.9;
+  display: flex;
+  flex-direction: column;
+  background: #070a0f;
+}
+
+/* Content Sections in Left Pane */
+.plab-section-card {
+  background: #111722;
+  border: 1px solid #202b3a;
+  border-radius: 6px;
+  padding: 14px;
+}
+
+.plab-sec-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--parrot-cyan);
+  margin-bottom: 8px;
+  letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plab-cmd-box {
+  background: #090d13;
+  border: 1px solid #28374a;
+  border-radius: 5px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #7ee787;
+}
+
+.plab-copy-btn {
+  background: transparent;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.plab-copy-btn:hover {
+  color: #ffffff;
+  background: #202b3b;
+}
+
+/* Assessment & Questions Section */
+.plab-question-card {
+  background: #131a26;
+  border: 1px solid #243346;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.plab-q-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.plab-q-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.plab-q-input {
+  flex: 1;
+  padding: 7px 10px;
+  background: #0b0f16;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  outline: none;
+}
+
+.plab-q-input:focus {
+  border-color: var(--parrot-cyan);
+}
+
+.plab-q-feedback {
+  margin-top: 8px;
+  font-size: 11.5px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  display: none;
+}
+
+.plab-q-feedback.correct {
+  display: block;
+  background: rgba(5, 213, 80, 0.15);
+  color: #05d550;
+  border: 1px solid rgba(5, 213, 80, 0.3);
+}
+
+.plab-q-feedback.incorrect {
+  display: block;
+  background: rgba(255, 51, 102, 0.15);
+  color: #ff3366;
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.plab-q-feedback.hint {
+  display: block;
+  background: rgba(255, 204, 0, 0.12);
+  color: #ffcc00;
+  border: 1px solid rgba(255, 204, 0, 0.3);
+}
+
+/* Terminal Viewport in Right Pane */
+.plab-term-header {
+  padding: 8px 12px;
+  background: #0e141d;
+  border-bottom: 1px solid #222f42;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.plab-term-screen {
+  flex: 1;
+  padding: 12px;
+  background: #080c12;
+  color: #05d550;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+.plab-term-input-bar {
+  padding: 8px 12px;
+  background: #0f151f;
+  border-top: 1px solid #222f42;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plab-term-prompt {
+  color: var(--parrot-cyan);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.plab-term-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  outline: none;
+}
+
+/* 6. ACHIEVEMENT BADGES VIEW */
+.plab-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.plab-badge-card {
+  background: #111822;
+  border: 1px solid #222e3e;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.plab-badge-card.unlocked {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.15);
+}
+
+.plab-badge-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: #182332;
+  border: 2px solid #303f54;
+  color: #8b949e;
+}
+
+.plab-badge-card.unlocked .plab-badge-icon {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: var(--parrot-cyan);
+  color: var(--parrot-cyan);
+}
+
+/* 7. COMPLETION CERTIFICATE */
+.plab-cert-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.plab-cert-frame {
+  width: 780px;
+  max-width: 100%;
+  background: #0f1520;
+  border: 4px solid var(--parrot-cyan);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 229, 255, 0.35);
+  color: #ffffff;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .plab-wrapper {
+    flex-direction: column;
+  }
+  .plab-sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    max-height: 180px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  }
+  .plab-ws-panes {
+    flex-direction: column;
+  }
+  .plab-ws-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  }
+  .plab-ws-right {
+    min-height: 280px;
+  }
+}

@@ -20,6 +20,7 @@ class DesktopManager {
     if (!this.container) return;
 
     const icons = [
+      { id: 'practicelabs', title: '500 Cyber Labs', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`, action: () => window.openPracticeLabsApp() },
       { id: 'cyberlab', title: 'Cyber Lab', icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>`, action: () => window.openCyberLabApp() },
       { id: 'toolcenter', title: 'Tool Center', icon: this.getIconSvg('grid'), action: () => window.openToolCenterApp() },
       { id: 'learninglab', title: 'Security Labs', icon: this.getIconSvg('book'), action: () => window.openLearningLabApp() },

@@ -80,6 +80,12 @@ class TopPanel {
       navCyberLab.addEventListener('click', () => window.openCyberLabApp());
     }
 
+    // 500 Cyber Security Practice Labs Navigation Button
+    const navPracticeLabs = document.getElementById('nav-practice-labs-btn');
+    if (navPracticeLabs) {
+      navPracticeLabs.addEventListener('click', () => window.openPracticeLabsApp());
+    }
+
     // OS Switcher button
     const osSwitcherBtn = document.getElementById('panel-os-btn');
     if (osSwitcherBtn) {
@@ -110,6 +116,7 @@ class TopPanel {
 
   bindQuickLaunch() {
     // Top Panel quick launch
+    const qPracticeLabs = document.getElementById('ql-practicelabs');
     const qTerminal = document.getElementById('ql-terminal');
     const qCyberLab = document.getElementById('ql-cyberlab');
     const qFiles = document.getElementById('ql-files');
@@ -118,6 +125,7 @@ class TopPanel {
     const qNmap = document.getElementById('ql-nmap');
     const qTools = document.getElementById('ql-tools');
 
+    if (qPracticeLabs) qPracticeLabs.onclick = () => window.openPracticeLabsApp();
     if (qTerminal) qTerminal.onclick = () => window.openTerminalApp();
     if (qCyberLab) qCyberLab.onclick = () => window.openCyberLabApp();
     if (qFiles) qFiles.onclick = () => window.openFileManagerApp();

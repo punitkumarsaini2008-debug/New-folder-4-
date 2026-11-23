@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/tools.css">
   <link rel="stylesheet" href="css/multios.css">
   <link rel="stylesheet" href="css/cyberlab.css">
+  <link rel="stylesheet" href="css/practicelabs.css">
 </head>
 <body class="os-theme-parrot">
 
@@ -35,8 +36,17 @@
         <span style="color:#05d550;font-weight:700;">Cyber Lab</span>
       </button>
 
+      <!-- 500 Cyber Security Practice Labs Navigation Menu Item -->
+      <button class="app-menu-btn practice-labs-nav-btn" id="nav-practice-labs-btn" title="Open 500 Cyber Security Practice Labs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2" style="width:16px;height:16px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span style="color:#00e5ff;font-weight:700;">500 Labs</span>
+      </button>
+
       <!-- Quick Launch Toolbar -->
       <div style="display:flex; align-items:center; gap:2px; margin-left:6px;">
+        <button class="quick-launch-item" id="ql-practicelabs" title="500 Cyber Security Practice Labs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </button>
         <button class="quick-launch-item" id="ql-cyberlab" title="Cyber Lab - Real Linux Terminal">
           <svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
         </button>
@@ -166,6 +176,11 @@
     <div class="menu-categories-list">
       <!-- 00 Cybersecurity Core Centers -->
       <div class="menu-category-header">00 - Cybersecurity Hubs</div>
+      <div class="menu-item" onclick="window.openPracticeLabsApp(); window.topPanel.closeMenu();">
+        <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+        <span>500 Cyber Security Practice Labs</span>
+        <span class="menu-item-desc">500 Hands-on Experiments</span>
+      </div>
       <div class="menu-item" onclick="window.openCyberLabApp(); window.topPanel.closeMenu();">
         <span class="menu-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#05d550" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></span>
         <span>Cyber Lab (Online Linux Hacking Lab)</span>
@@ -370,6 +385,8 @@
   <script src="js/osManager.js"></script>
   
   <!-- Cybersecurity Hubs & Tools -->
+  <script src="js/data/practiceLabsData.js"></script>
+  <script src="js/apps/practiceLabsApp.js"></script>
   <script src="js/apps/cyberLabApp.js"></script>
   <script src="js/apps/terminalApp.js"></script>
   <script src="js/apps/toolCenterApp.js"></script>
